@@ -1,10 +1,11 @@
 'use strict';
 var tokenCtrl = function($scope, $sce, walletService) {
+	$scope.tokenVisibility = "hidden";
 	$scope.sendTxModal = new Modal(document.getElementById('sendTransaction'));
 	walletService.wallet = null;
 	walletService.password = '';
 	$scope.tokens = Token.popTokens;
-    $scope.Validator = Validator;
+  $scope.Validator = Validator;
 	$scope.tokenTx = {
 		to: '',
 		value: 0,
@@ -14,7 +15,8 @@ var tokenCtrl = function($scope, $sce, walletService) {
 	$scope.localToken = {
 		contractAdd: "",
 		symbol: "",
-		decimals: ""
+		decimals: "",
+		type: "custom",
 	};
 	$scope.$watch(function() {
 		if (walletService.wallet == null) return null;
@@ -29,13 +31,13 @@ var tokenCtrl = function($scope, $sce, walletService) {
 	$scope.setTokens = function() {
 		$scope.tokenObjs = [];
 		for (var i = 0; i < $scope.tokens.length; i++) {
-			$scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal));
+			$scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal, $scope.tokens[i].type));
 		}
-        var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
-        for (var i = 0; i < storedTokens.length; i++) {
-			$scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal));
+    var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
+    for (var i = 0; i < storedTokens.length; i++) {
+			$scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal, storedTokens[i].type));
 		}
-        $scope.tokenTx.id = 0;
+    $scope.tokenTx.id = 0;
 	}
     $scope.$watch('[tokenTx.to,tokenTx.value,tokenTx.id]', function () {
         if($scope.tokenObjs !== undefined && $scope.tokenObjs[$scope.tokenTx.id]!== undefined && $scope.Validator.isValidAddress($scope.tokenTx.to)&&$scope.Validator.isPositiveNumber($scope.tokenTx.value)){
@@ -53,7 +55,7 @@ var tokenCtrl = function($scope, $sce, walletService) {
             data: $scope.tokenObjs[$scope.tokenTx.id].getData($scope.tokenTx.to, $scope.tokenTx.value).data
         }
         ethFuncs.estimateGas(estObj,false,function(data){
-            if(!data.error) $scope.tokenTx.gasLimit = data.data; 
+            if(!data.error) $scope.tokenTx.gasLimit = data.data;
         });
     }
 	$scope.setBalance = function() {
@@ -69,7 +71,7 @@ var tokenCtrl = function($scope, $sce, walletService) {
 				});
 			}
 		});
-        ajaxReq.getBalance($scope.wallet.getAddressString(), true, function(data) {
+      ajaxReq.getBalance($scope.wallet.getAddressString(), true, function(data) {
 			if (data.error) {
 				$scope.etcBalance = data.msg;
 			} else {
@@ -114,7 +116,7 @@ var tokenCtrl = function($scope, $sce, walletService) {
 			if (!resp.isError) {
 				$scope.sendTxStatus = $sce.trustAsHtml(globalFuncs.getSuccessText(globalFuncs.successMsgs[2] + "<a href='http://etherscan.io/tx/" + resp.data + "' target='_blank'>" + resp.data + "</a>"));
 				$scope.setBalance();
-                $scope.tokenObjs[$scope.tokenTx.id].setBalance();
+          $scope.tokenObjs[$scope.tokenTx.id].setBalance();
 			} else {
 				$scope.sendTxStatus = $sce.trustAsHtml(globalFuncs.getDangerText(resp.error));
 			}
@@ -129,19 +131,42 @@ var tokenCtrl = function($scope, $sce, walletService) {
 			storedTokens.push({
 				contractAddress: $scope.localToken.contractAdd,
 				symbol: $scope.localToken.symbol,
-				decimal: parseInt($scope.localToken.decimals)
+				decimal: parseInt($scope.localToken.decimals),
+				type: "custom"
 				});
 			$scope.localToken = {
 				contractAdd: "",
 				symbol: "",
-				decimals: ""
+				decimals: "",
+				type: "custom"
 			};
-            localStorage.setItem("localTokens",JSON.stringify(storedTokens));
-            $scope.setTokens();
+      localStorage.setItem("localTokens",JSON.stringify(storedTokens));
+      $scope.setTokens();
 			$scope.validateLocalToken = $sce.trustAsHtml('');
 		} catch (e) {
 			$scope.validateLocalToken = $sce.trustAsHtml(globalFuncs.getDangerText(e));
 		}
 	}
+
+	$scope.removeTokenFromLocal = function(tokenSymbol) {
+		var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
+
+		// remove from localstorage so it doesn't show up on refresh
+		for (var i =0; i < storedTokens.length; i++)
+		if (storedTokens[i].symbol === tokenSymbol) {
+		  storedTokens.splice(i,1);
+		  break;
+		}
+		localStorage.setItem("localTokens",JSON.stringify(storedTokens));
+
+		// remove from tokenObj so it removes from display
+		for (var i =0; i < $scope.tokenObjs.length; i++)
+		if ($scope.tokenObjs[i].symbol === tokenSymbol) {
+		  $scope.tokenObjs.splice(i,1);
+		  break;
+		}
+
+	}
+
 };
 module.exports = tokenCtrl;

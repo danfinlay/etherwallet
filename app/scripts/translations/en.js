@@ -4,6 +4,13 @@ var en = function() {}
 en.code = 'en';
 en.data = {
 
+  /* Mnemonic Additions */
+  /* Tay TODO: add to all language files, reach out to people to translate, update any other pages at that time too */
+  x_Mnemonic:           'Mnemonic Phrase',
+  ADD_Radio_5:          'Paste/Type Your Mnemonic',
+  SEND_custom:          'Custom Token',
+  ERROR_21:             ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+
   /* Navigation*/
   NAV_YourWallets:      'Your Wallets',
   NAV_AddWallet:        'Add Wallet',
@@ -48,7 +55,7 @@ en.data = {
   MEW_Warning_1:        'Always check the URL before accessing your wallet or creating a new wallet. Beware of phishing sites!',
   CX_Warning_1:         'Make sure you have **external backups** of any wallets you store here. Many things could happen that would cause you to lose the data in this Chrome Extension, including uninstalling and reinstalling the extension. This extension is a way to easily access your wallets, **not** a way to back them up.',
   MEW_Tagline:          'Open Source JavaScript Client-Side Ether Wallet',
-	CX_Tagline:           'Open Source JavaScript Client-Side Ether Wallet Chrome Extension',
+  CX_Tagline:           'Open Source JavaScript Client-Side Ether Wallet Chrome Extension',
 
   /* Footer */
   FOOTER_1:             'An open source, javascript, client-side tool for generating Ethereum Wallets & sending transactions.',
@@ -110,7 +117,6 @@ en.data = {
   SEND_addr:             'To Address: ',
   SEND_amount:           'Amount to Send: ',
   SEND_amount_short:     'Amount',
-  SEND_custom:           'Custom',
   SEND_gas:              'Gas',
   SEND_TransferTotal:   'Send Entire Balance',
   SEND_generate:         'Generate Transaction',

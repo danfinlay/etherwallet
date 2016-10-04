@@ -225,6 +225,7 @@ footer {
   table& {
     font-weight: 200;
     border-bottom: 0;
+    min-width: 200px;
     td {
       padding: 4px 5px;
       line-height: 1;
@@ -236,6 +237,10 @@ footer {
     }
     tr:nth-child(even) {
       background-color: @gray-lightest;
+    }
+    tr:nth-last-child(2),
+    tr:last-child {
+      background-color: white!important;
     }
   }
 }
@@ -294,4 +299,13 @@ input[type="password"]+.eye {
     font-size: 20px;
     line-height: 1;
   }
+}
+
+// little x image next to custom tokens
+.token-remove {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  left: 18px;
+  cursor: pointer;
 }
