@@ -1621,17 +1621,38 @@
         });
         $scope.setTokens();
       });
+
+      // Populate token list + from local storage
       $scope.setTokens = function () {
         $scope.tokenObjs = [];
         $scope.tokens = Token.popTokens;
         for (var i = 0; i < $scope.tokens.length; i++) {
-          $scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal));
+          $scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal, $scope.tokens[i].type));
         }
         var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
         for (var i = 0; i < storedTokens.length; i++) {
-          $scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal));
+          $scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal, storedTokens[i].type));
         }
       };
+
+      // Remove tokens from localstorage when they click the 'X'
+      $scope.removeTokenFromLocal = function (tokenSymbol) {
+        var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
+
+        // remove from localstorage so it doesn't show up on refresh
+        for (var i = 0; i < storedTokens.length; i++) if (storedTokens[i].symbol === tokenSymbol) {
+          storedTokens.splice(i, 1);
+          break;
+        }
+        localStorage.setItem("localTokens", JSON.stringify(storedTokens));
+
+        // remove from tokenObj so it removes from display
+        for (var i = 0; i < $scope.tokenObjs.length; i++) if ($scope.tokenObjs[i].symbol === tokenSymbol) {
+          $scope.tokenObjs.splice(i, 1);
+          break;
+        }
+      };
+
       $scope.printQRCode = function () {
         globalFuncs.printPaperWallets(JSON.stringify([{
           address: $scope.wallet.getAddressString(),
@@ -2786,6 +2807,16 @@
     de.code = 'de';
     de.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Geth Error Messages */
       GETH_InvalidSender: 'Invalid sender',
       GETH_Nonce: 'Nonce too low',
@@ -3334,6 +3365,16 @@
     var el = function () {};
     el.code = 'el';
     el.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Geth Error Messages */
       GETH_InvalidSender: 'Invalid sender',
@@ -3890,11 +3931,14 @@
     en.data = {
 
       /* Mnemonic Additions */
-      /* Tay TODO: add to all language files, reach out to people to translate, update any other pages at that time too */
       x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
       ADD_Radio_5: 'Paste/Type Your Mnemonic',
       SEND_custom: 'Custom Token',
       ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Navigation*/
       NAV_YourWallets: 'Your Wallets',
@@ -4443,6 +4487,16 @@
     var fi = function () {};
     fi.code = 'fi';
     fi.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Chrome Extension */
       CX_error_1: 'You don\'t have any wallets saved. Click ["Add Wallet"](/cx-wallet.html#add-wallet) to add one!',
@@ -5032,6 +5086,16 @@
     fr.code = 'fr';
     fr.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Navigation*/
       NAV_YourWallets: 'Vos portefeuilles',
       NAV_AddWallet: 'Ajouter un portefeuille',
@@ -5581,6 +5645,16 @@
     hu.code = 'hu';
     hu.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Navigation*/
       NAV_YourWallets: 'A Te Tárcáid',
       NAV_AddWallet: 'Tárca hozzáadása',
@@ -6128,6 +6202,16 @@
     var id = function () {};
     id.code = 'id';
     id.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Navigation*/
       NAV_YourWallets: 'Dompet Anda',
@@ -6679,6 +6763,16 @@
     it.code = 'it';
     it.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Navigation*/
       NAV_YourWallets: 'I tuoi portafogli',
       NAV_AddWallet: 'Aggiungi portafoglio',
@@ -7228,6 +7322,16 @@
     ja.code = 'ja';
     ja.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Geth Error Messages */
       GETH_InvalidSender: '送出元が無効です',
       GETH_Nonce: 'Nonce が足りません',
@@ -7775,6 +7879,16 @@
     var nl = function () {};
     nl.code = 'nl';
     nl.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Navigation*/
       NAV_YourWallets: 'Jouw Wallets',
@@ -8325,6 +8439,16 @@
     no.code = 'no';
     no.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Navigation*/
       NAV_YourWallets: 'Dine lommebøker',
       NAV_AddWallet: 'Legg til lommebok',
@@ -8873,6 +8997,16 @@
     var pl = function () {};
     pl.code = 'pl';
     pl.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Navigation*/
       NAV_YourWallets: 'Twoje Portfele',
@@ -9423,6 +9557,16 @@
     ru.code = 'ru';
     ru.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Geth Error Messages */
       GETH_InvalidSender: 'Неверный адрес отправителя',
       GETH_Nonce: 'Номер перевода (nonce) слишком мал',
@@ -9972,6 +10116,16 @@
     var tr = function () {};
     tr.code = 'tr';
     tr.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Geth Error Messages */
       GETH_InvalidSender: 'Invalid sender',
@@ -10598,6 +10752,16 @@
     vi.code = 'vi';
     vi.data = {
 
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
+
       /* Navigation*/
       NAV_YourWallets: 'Ví Của Bạn',
       NAV_AddWallet: 'Thêm Ví',
@@ -11146,6 +11310,16 @@
     var zh = function () {};
     zh.code = 'zh';
     zh.data = {
+
+      /* Mnemonic Additions */
+      x_Mnemonic: 'Mnemonic Phrase',
+      x_12Word: '12 Word Recovery Seed',
+      x_24Word: '24 Word Recovery Seed',
+      ADD_Radio_5: 'Paste/Type Your Mnemonic',
+      SEND_custom: 'Custom Token',
+      ERROR_21: ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+      TOKEN_show: 'Show All Tokens',
+      TOKEN_hide: 'Hide Tokens',
 
       /* Navigation*/
       NAV_YourWallets: '你的钱包',

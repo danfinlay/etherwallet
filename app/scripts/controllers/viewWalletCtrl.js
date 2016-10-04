@@ -33,17 +33,41 @@ var viewWalletCtrl = function($scope, walletService) {
         });
         $scope.setTokens();
   });
-    $scope.setTokens = function() {
+
+  // Populate token list + from local storage
+  $scope.setTokens = function() {
     $scope.tokenObjs = [];
-        $scope.tokens = Token.popTokens;
+    $scope.tokens = Token.popTokens;
     for (var i = 0; i < $scope.tokens.length; i++) {
-      $scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal));
+      $scope.tokenObjs.push(new Token($scope.tokens[i].address, $scope.wallet.getAddressString(), $scope.tokens[i].symbol, $scope.tokens[i].decimal, $scope.tokens[i].type));
     }
-        var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
-        for (var i = 0; i < storedTokens.length; i++) {
-      $scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal));
+    var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
+    for (var i = 0; i < storedTokens.length; i++) {
+      $scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal, storedTokens[i].type));
     }
   }
+
+  // Remove tokens from localstorage when they click the 'X'
+  $scope.removeTokenFromLocal = function(tokenSymbol) {
+    var storedTokens = localStorage.getItem("localTokens") != null ? JSON.parse(localStorage.getItem("localTokens")) : [];
+
+    // remove from localstorage so it doesn't show up on refresh
+    for (var i =0; i < storedTokens.length; i++)
+    if (storedTokens[i].symbol === tokenSymbol) {
+      storedTokens.splice(i,1);
+      break;
+    }
+    localStorage.setItem("localTokens",JSON.stringify(storedTokens));
+
+    // remove from tokenObj so it removes from display
+    for (var i =0; i < $scope.tokenObjs.length; i++)
+    if ($scope.tokenObjs[i].symbol === tokenSymbol) {
+      $scope.tokenObjs.splice(i,1);
+      break;
+    }
+
+  }
+
   $scope.printQRCode = function() {
     globalFuncs.printPaperWallets(JSON.stringify([{
       address: $scope.wallet.getAddressString(),
