@@ -5,11 +5,14 @@ en.code = 'en';
 en.data = {
 
   /* Mnemonic Additions */
-  /* Tay TODO: add to all language files, reach out to people to translate, update any other pages at that time too */
   x_Mnemonic:           'Mnemonic Phrase',
+  x_12Word:             '12 Word Recovery Seed',
+  x_24Word:             '24 Word Recovery Seed',
   ADD_Radio_5:          'Paste/Type Your Mnemonic',
   SEND_custom:          'Custom Token',
   ERROR_21:             ' is not a valid ERC-20 token. If other tokens are loading, please remove this token and try again.',
+  TOKEN_show:           'Show All Tokens',
+  TOKEN_hide:           'Hide Tokens',
 
   /* Navigation*/
   NAV_YourWallets:      'Your Wallets',
