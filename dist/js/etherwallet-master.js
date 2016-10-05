@@ -1422,7 +1422,7 @@
       $scope.tokenTx = {
         to: '',
         value: 0,
-        id: 0,
+        id: -1,
         gasLimit: 150000
       };
       $scope.localToken = {
@@ -1450,7 +1450,7 @@
         for (var i = 0; i < storedTokens.length; i++) {
           $scope.tokenObjs.push(new Token(storedTokens[i].contractAddress, $scope.wallet.getAddressString(), globalFuncs.stripTags(storedTokens[i].symbol), storedTokens[i].decimal, storedTokens[i].type));
         }
-        $scope.tokenTx.id = 0;
+        $scope.tokenTx.id = -1;
       };
       $scope.$watch('[tokenTx.to,tokenTx.value,tokenTx.id]', function () {
         if ($scope.tokenObjs !== undefined && $scope.tokenObjs[$scope.tokenTx.id] !== undefined && $scope.Validator.isValidAddress($scope.tokenTx.to) && $scope.Validator.isPositiveNumber($scope.tokenTx.value)) {
@@ -1497,6 +1497,10 @@
         $scope.tokenTx.value = "50";
       };
       $scope.generateTokenTx = function () {
+        if ($scope.tokenTx.id == -1) {
+          $scope.validateTxStatus = $sce.trustAsHtml(globalFuncs.getDangerText(globalFuncs.errorMsgs[19]));
+          return;
+        }
         var tokenData = $scope.tokenObjs[$scope.tokenTx.id].getData($scope.tokenTx.to, $scope.tokenTx.value);
         if (tokenData.isError) {
           $scope.validateTxStatus = $sce.trustAsHtml(globalFuncs.getDangerText(tokenData.error));
@@ -2307,7 +2311,7 @@
       app.controller('quickSendCtrl', ['$scope', '$sce', quickSendCtrl]);
       app.controller('cxDecryptWalletCtrl', ['$scope', '$sce', 'walletService', cxDecryptWalletCtrl]);
     }
-  }, { "./ajaxReq": 1, "./controllers/CX/addWalletCtrl": 2, "./controllers/CX/cxDecryptWalletCtrl": 3, "./controllers/CX/mainPopCtrl": 4, "./controllers/CX/myWalletsCtrl": 5, "./controllers/CX/quickSendCtrl": 6, "./controllers/bulkGenCtrl": 7, "./controllers/decryptWalletCtrl": 8, "./controllers/deployContractCtrl": 9, "./controllers/digixCtrl": 10, "./controllers/footerCtrl": 11, "./controllers/sendOfflineTxCtrl": 12, "./controllers/sendTxCtrl": 13, "./controllers/tabsCtrl": 14, "./controllers/theDaoCtrl": 15, "./controllers/tokenCtrl": 16, "./controllers/viewCtrl": 17, "./controllers/viewWalletCtrl": 18, "./controllers/walletGenCtrl": 19, "./customMarked": 20, "./cxFuncs": 21, "./directives/QRCodeDrtv": 22, "./directives/blockiesDrtv": 23, "./directives/cxWalletDecryptDrtv": 24, "./directives/fileReaderDrtv": 25, "./directives/walletDecryptDrtv": 26, "./ethFuncs": 27, "./etherUnits": 28, "./globalFuncs": 29, "./myetherwallet": 31, "./services/globalService": 32, "./services/walletService": 33, "./tokens": 34, "./translations/translate.js": 49, "./uiFuncs": 52, "./validator": 53, "angular": 59, "angular-sanitize": 55, "angular-translate": 57, "angular-translate-handler-log": 56, "bignumber.js": 76, "crypto": 116, "ethereumjs-tx": 146, "ethereumjs-util": 147, "scryptsy": 194, "uuid": 216 }], 31: [function (require, module, exports) {
+  }, { "./ajaxReq": 1, "./controllers/CX/addWalletCtrl": 2, "./controllers/CX/cxDecryptWalletCtrl": 3, "./controllers/CX/mainPopCtrl": 4, "./controllers/CX/myWalletsCtrl": 5, "./controllers/CX/quickSendCtrl": 6, "./controllers/bulkGenCtrl": 7, "./controllers/decryptWalletCtrl": 8, "./controllers/deployContractCtrl": 9, "./controllers/digixCtrl": 10, "./controllers/footerCtrl": 11, "./controllers/sendOfflineTxCtrl": 12, "./controllers/sendTxCtrl": 13, "./controllers/tabsCtrl": 14, "./controllers/theDaoCtrl": 15, "./controllers/tokenCtrl": 16, "./controllers/viewCtrl": 17, "./controllers/viewWalletCtrl": 18, "./controllers/walletGenCtrl": 19, "./customMarked": 20, "./cxFuncs": 21, "./directives/QRCodeDrtv": 22, "./directives/blockiesDrtv": 23, "./directives/cxWalletDecryptDrtv": 24, "./directives/fileReaderDrtv": 25, "./directives/walletDecryptDrtv": 26, "./ethFuncs": 27, "./etherUnits": 28, "./globalFuncs": 29, "./myetherwallet": 31, "./services/globalService": 32, "./services/walletService": 33, "./tokens": 34, "./translations/translate.js": 49, "./uiFuncs": 52, "./validator": 53, "angular": 59, "angular-sanitize": 55, "angular-translate": 57, "angular-translate-handler-log": 56, "bignumber.js": 76, "crypto": 116, "ethereumjs-tx": 146, "ethereumjs-util": 147, "scryptsy": 192, "uuid": 212 }], 31: [function (require, module, exports) {
     (function (Buffer) {
       'use strict';
 
@@ -10320,7 +10324,7 @@
       DAO_ETC_Label_2: '"Beyaz Şapka Grubu" ETC\'lerini geri almak için yorulmadan çalışmaktadır. Eğer istiyorsan, senin çekiminden yüzdesi bağışlayarak "teşekkür ederim" diyebilirsin.',
       DAO_Desc: 'Use this tab to Withdraw your DAO Tokens for ETH **& ETC**. If you wish to send DAO, please use the Send Tokens Tab.',
       DAO_Inst: 'Evet. Sadece büyük kırmızı düğmeye bas. Bu kadar kolay.',
-      DAO_Warning: 'If you are getting an "Insufficient balance for gas" error, you must have a small amount of ether in your account in order to cover the cost of gas. Add 0.001 ether to this account and try again. ',
+      DAO_Warning: 'If you are getting an "Insufficient balance for gas" error, you must have a small amount of ether in your account in order to cover the cost of gas. Add 0.01 ether to this account and try again. ',
       DAOModal_Title: 'Sadece emin olmak için...',
 
       // full sentence is "You are about to withdraw 100 DAO tokens to address 0x12344 for 1 ETH.
@@ -10386,7 +10390,7 @@
       ERROR_15: 'Cüzdan bulunmadi. ',
       ERROR_16: 'It doesnt look like a proposal with this ID exists yet or there is an error reading this proposal. ',
       ERROR_17: 'A wallet with this address already exists in storage. Please check your wallets page. ',
-      ERROR_18: 'You need to have at least 0.001 ether in your account to cover the cost of gas. Please add some ether and try again. ',
+      ERROR_18: 'You need to have at least 0.01 ether in your account to cover the cost of gas. Please add some ether and try again. ',
       ERROR_19: 'All gas would be used on this transaction. This means you have already voted on this proposal or the debate period has ended.',
       ERROR_20: 'Geçersiz sembol',
       SUCCESS_1: 'Geçerli adres',
@@ -10942,7 +10946,7 @@
       DAO_ETC_Label_2: 'Nhóm Whitehat đã làm việc cật lực để đòi lại số ETC và mang về cho bạn. Bạn có thể nói lời cảm ơn đến họ bằng cách quyên góp một phần tỷ lệ % từ khoảng hoàn lại của bạn. ',
       DAO_Desc: 'Sử dụng phần này cho việc thu hồi DAO Token và hoàn trả lại **ETH & ETC**. Nếu bạn muốn gửi DAO Token, xin vui lòng sử dụng mục "gửi Token".',
       DAO_Inst: 'Đúng rồi, Bạn chỉ cần chọn vào nút lớn màu đỏ.',
-      DAO_Warning: 'Nếu bạn nhận được một thông báo lỗi "số dư tài khoản không đủ cho Gas", thì bạn cần có mộ lượng nhỏ ether trong tài khoản được dùng để thanh toán chi phí gas. Bạn hãy thêm vào 0.001 ether vào tài khoản và thực hiện lại. ',
+      DAO_Warning: 'Nếu bạn nhận được một thông báo lỗi "số dư tài khoản không đủ cho Gas", thì bạn cần có mộ lượng nhỏ ether trong tài khoản được dùng để thanh toán chi phí gas. Bạn hãy thêm vào 0.01 ether vào tài khoản và thực hiện lại. ',
       DAOModal_Title: 'Đảm bảo rằng...',
       // full sentence is "You are about to withdraw 100 DAO tokens to address 0x12344 for 1 ETH.
       DAOModal_1: 'Bạn Muốn thực hiện việc "Thu Hồi"',
@@ -11007,7 +11011,7 @@
       ERROR_15: 'Không tìm thấy Ví. ',
       ERROR_16: 'It doesnt look like a proposal with this ID exists yet or there is an error reading this proposal. ',
       ERROR_17: 'Đã có một ví với địa chỉ này đang tồn tại trong mục lưu trữ. Vui lòng kiễm tra trang ví của bạn. ',
-      ERROR_18: 'Bạn cần có ít nhất 0.001 ether trong tài khoản để thanh toán chi phí gas. Hãy thêm một số ether và thực hiện lại. ',
+      ERROR_18: 'Bạn cần có ít nhất 0.01 ether trong tài khoản để thanh toán chi phí gas. Hãy thêm một số ether và thực hiện lại. ',
       ERROR_19: 'Toàn bộ gas sẽ được sử dụng trong giao dịch này. Việc làm này có nghĩa là bạn đã bỏ phiếu cho đề xuất này hoặc kỳ hạn của cuộc tranh luận đã kết thúc.',
       ERROR_20: 'Biểu tượng không hợp lệ',
       SUCCESS_1: 'Địa Chỉ Hợp Lệ',
@@ -11501,7 +11505,7 @@
       DAO_ETC_Label_2: '白帽黑客为取回你的ETC不知疲倦地工作。 你可以将一定比例的ETC捐赠给白帽黑客，以表感谢之意。 ',
       DAO_Desc: '使用这个标签销毁DAO代币，换回ETH和ETC。如果你想发送DAO，请使用发送代币标签。',
       DAO_Inst: '是的。只需按红色按钮。非常简单。',
-      DAO_Warning: '如果你遇到了“余额不足以支付gas"的错误，你的账户中必须有少量以太币，以支付gas费用。向这个账户发送0.001以太币，再次尝试。',
+      DAO_Warning: '如果你遇到了“余额不足以支付gas"的错误，你的账户中必须有少量以太币，以支付gas费用。向这个账户发送0.01以太币，再次尝试。',
       DAOModal_Title: '确保...',
       // full sentence is "You are about to withdraw 100 DAO tokens to address 0x12344 for 1 ETH.
       DAOModal_1: '你将要销毁',
@@ -11566,7 +11570,7 @@
       ERROR_15: '找不到钱包。',
       ERROR_16: '看起来这个提议不存在或者读取这个提议时出现错误。',
       ERROR_17: '这个地址钱包已经存在于存储中。请查看你的钱包页面。',
-      ERROR_18: '你的账户需要至少0.001以太币，已支付gas费用。请添加一些以太币，再次尝试。',
+      ERROR_18: '你的账户需要至少0.01以太币，已支付gas费用。请添加一些以太币，再次尝试。',
       ERROR_19: '所有的gas将用于这笔交易。 这意味着你已经对这个提议进行投票或者辩论期已经结束。',
       ERROR_20: '无效符号',
       SUCCESS_1: '有效地址',
@@ -11654,7 +11658,7 @@
       HELP_3_Desc_5: 'If the wallet is encrypted, a text box will automatically appear. Enter the password.',
       HELP_3_Desc_6: 'Click the "Unlock Wallet" button.',
       HELP_3_Desc_7: 'Your wallet information should show up. Find your account address, next to a colorful, circular icon. This icon visually represents your address. Be certain that the address is the address you have saved to your text document and is on your paper wallet.',
-      HELP_3_Desc_8: 'If you are planning on holding a large amount of ether, we recommend that send a small amount of ether from new wallet before depositing a large amount. Send 0.001 ether to your new wallet, access that wallet, send that 0.001 ether to another address, and ensure everything works smoothly.',
+      HELP_3_Desc_8: 'If you are planning on holding a large amount of ether, we recommend that send a small amount of ether from new wallet before depositing a large amount. Send 0.01 ether to your new wallet, access that wallet, send that 0.01 ether to another address, and ensure everything works smoothly.',
 
       HELP_4_Title: '4) How do I send Ether from one wallet to another?',
       HELP_4_Desc_1: 'If you plan to move a large amount of ether, you should test sending a small amount to your wallet first to ensure everything goes as planned.',
@@ -47523,7 +47527,7 @@
     Entity.prototype.encode = function encode(data, enc, /* internal */reporter) {
       return this._getEncoder(enc).encode(data, reporter);
     };
-  }, { "../asn1": 60, "inherits": 158, "vm": 217 }], 62: [function (require, module, exports) {
+  }, { "../asn1": 60, "inherits": 158, "vm": 213 }], 62: [function (require, module, exports) {
     var inherits = require('inherits');
     var Reporter = require('../base').Reporter;
     var Buffer = require('buffer').Buffer;
@@ -49267,10 +49271,9 @@
       }
       return keys;
     };
-  }, { "util/": 214 }], 75: [function (require, module, exports) {
+  }, { "util/": 210 }], 75: [function (require, module, exports) {
     'use strict';
 
-    exports.byteLength = byteLength;
     exports.toByteArray = toByteArray;
     exports.fromByteArray = fromByteArray;
 
@@ -49278,17 +49281,23 @@
     var revLookup = [];
     var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
 
-    var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    for (var i = 0, len = code.length; i < len; ++i) {
-      lookup[i] = code[i];
-      revLookup[code.charCodeAt(i)] = i;
+    function init() {
+      var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      for (var i = 0, len = code.length; i < len; ++i) {
+        lookup[i] = code[i];
+        revLookup[code.charCodeAt(i)] = i;
+      }
+
+      revLookup['-'.charCodeAt(0)] = 62;
+      revLookup['_'.charCodeAt(0)] = 63;
     }
 
-    revLookup['-'.charCodeAt(0)] = 62;
-    revLookup['_'.charCodeAt(0)] = 63;
+    init();
 
-    function placeHoldersCount(b64) {
+    function toByteArray(b64) {
+      var i, j, l, tmp, placeHolders, arr;
       var len = b64.length;
+
       if (len % 4 > 0) {
         throw new Error('Invalid string. Length must be a multiple of 4');
       }
@@ -49298,19 +49307,9 @@
       // represent one byte
       // if there is only one, then the three characters before it represent 2 bytes
       // this is just a cheap hack to not do indexOf twice
-      return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
-    }
+      placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
 
-    function byteLength(b64) {
       // base64 is 4/3 + up to two characters of the original data
-      return b64.length * 3 / 4 - placeHoldersCount(b64);
-    }
-
-    function toByteArray(b64) {
-      var i, j, l, tmp, placeHolders, arr;
-      var len = b64.length;
-      placeHolders = placeHoldersCount(b64);
-
       arr = new Arr(len * 3 / 4 - placeHolders);
 
       // if there are placeholders, only get up to the last complete 4 chars
@@ -55628,7 +55627,7 @@
     } else {
       // Node.js or Web worker
       try {
-        var crypto = require('crypto');
+        var crypto = require('cry' + 'pto');
 
         Rand.prototype._rand = function _rand(n) {
           return crypto.randomBytes(n);
@@ -55642,7 +55641,7 @@
         };
       }
     }
-  }, { "crypto": 80 }], 80: [function (require, module, exports) {}, {}], 81: [function (require, module, exports) {
+  }, {}], 80: [function (require, module, exports) {}, {}], 81: [function (require, module, exports) {
     (function (Buffer) {
       // based on the aes implimentation in triple sec
       // https://github.com/keybase/triplesec
@@ -56836,7 +56835,7 @@
         return r;
       }
     }).call(this, require("buffer").Buffer);
-  }, { "bn.js": 78, "buffer": 108, "randombytes": 180 }], 100: [function (require, module, exports) {
+  }, { "bn.js": 78, "buffer": 108, "randombytes": 179 }], 100: [function (require, module, exports) {
     (function (Buffer) {
       const Sha3 = require('js-sha3');
 
@@ -57044,7 +57043,7 @@
         createVerify: createVerify
       };
     }).call(this, require("buffer").Buffer);
-  }, { "./algos": 101, "./sign": 104, "./verify": 105, "buffer": 108, "create-hash": 112, "inherits": 158, "stream": 209 }], 103: [function (require, module, exports) {
+  }, { "./algos": 101, "./sign": 104, "./verify": 105, "buffer": 108, "create-hash": 112, "inherits": 158, "stream": 206 }], 103: [function (require, module, exports) {
     'use strict';
 
     exports['1.3.132.0.10'] = 'secp256k1';
@@ -57612,8 +57611,6 @@
       function assertSize(size) {
         if (typeof size !== 'number') {
           throw new TypeError('"size" argument must be a number');
-        } else if (size < 0) {
-          throw new RangeError('"size" argument must not be negative');
         }
       }
 
@@ -57675,20 +57672,12 @@
         var length = byteLength(string, encoding) | 0;
         that = createBuffer(that, length);
 
-        var actual = that.write(string, encoding);
-
-        if (actual !== length) {
-          // Writing a hex string, for example, that contains invalid characters will
-          // cause everything after the first invalid character to be ignored. (e.g.
-          // 'abxxcd' will be treated as 'ab')
-          that = that.slice(0, actual);
-        }
-
+        that.write(string, encoding);
         return that;
       }
 
       function fromArrayLike(that, array) {
-        var length = array.length < 0 ? 0 : checked(array.length) | 0;
+        var length = checked(array.length) | 0;
         that = createBuffer(that, length);
         for (var i = 0; i < length; i += 1) {
           that[i] = array[i] & 255;
@@ -57756,7 +57745,7 @@
       }
 
       function checked(length) {
-        // Note: cannot use `length < kMaxLength()` here because that fails when
+        // Note: cannot use `length < kMaxLength` here because that fails when
         // length is NaN (which is otherwise coerced to zero.)
         if (length >= kMaxLength()) {
           throw new RangeError('Attempt to allocate Buffer larger than maximum ' + 'size: 0x' + kMaxLength().toString(16) + ' bytes');
@@ -57805,9 +57794,9 @@
           case 'utf8':
           case 'utf-8':
           case 'ascii':
-          case 'latin1':
           case 'binary':
           case 'base64':
+          case 'raw':
           case 'ucs2':
           case 'ucs-2':
           case 'utf16le':
@@ -57867,8 +57856,9 @@
         for (;;) {
           switch (encoding) {
             case 'ascii':
-            case 'latin1':
             case 'binary':
+            case 'raw':
+            case 'raws':
               return len;
             case 'utf8':
             case 'utf-8':
@@ -57941,9 +57931,8 @@
             case 'ascii':
               return asciiSlice(this, start, end);
 
-            case 'latin1':
             case 'binary':
-              return latin1Slice(this, start, end);
+              return binarySlice(this, start, end);
 
             case 'base64':
               return base64Slice(this, start, end);
@@ -57991,20 +57980,6 @@
         for (var i = 0; i < len; i += 4) {
           swap(this, i, i + 3);
           swap(this, i + 1, i + 2);
-        }
-        return this;
-      };
-
-      Buffer.prototype.swap64 = function swap64() {
-        var len = this.length;
-        if (len % 8 !== 0) {
-          throw new RangeError('Buffer size must be a multiple of 64-bits');
-        }
-        for (var i = 0; i < len; i += 8) {
-          swap(this, i, i + 7);
-          swap(this, i + 1, i + 6);
-          swap(this, i + 2, i + 5);
-          swap(this, i + 3, i + 4);
         }
         return this;
       };
@@ -58091,70 +58066,7 @@
         return 0;
       };
 
-      // Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-      // OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-      //
-      // Arguments:
-      // - buffer - a Buffer to search
-      // - val - a string, Buffer, or number
-      // - byteOffset - an index into `buffer`; will be clamped to an int32
-      // - encoding - an optional encoding, relevant is val is a string
-      // - dir - true for indexOf, false for lastIndexOf
-      function bidirectionalIndexOf(buffer, val, byteOffset, encoding, dir) {
-        // Empty buffer means no match
-        if (buffer.length === 0) return -1;
-
-        // Normalize byteOffset
-        if (typeof byteOffset === 'string') {
-          encoding = byteOffset;
-          byteOffset = 0;
-        } else if (byteOffset > 0x7fffffff) {
-          byteOffset = 0x7fffffff;
-        } else if (byteOffset < -0x80000000) {
-          byteOffset = -0x80000000;
-        }
-        byteOffset = +byteOffset; // Coerce to Number.
-        if (isNaN(byteOffset)) {
-          // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-          byteOffset = dir ? 0 : buffer.length - 1;
-        }
-
-        // Normalize byteOffset: negative offsets start from the end of the buffer
-        if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
-        if (byteOffset >= buffer.length) {
-          if (dir) return -1;else byteOffset = buffer.length - 1;
-        } else if (byteOffset < 0) {
-          if (dir) byteOffset = 0;else return -1;
-        }
-
-        // Normalize val
-        if (typeof val === 'string') {
-          val = Buffer.from(val, encoding);
-        }
-
-        // Finally, search either indexOf (if dir is true) or lastIndexOf
-        if (Buffer.isBuffer(val)) {
-          // Special case: looking for empty string/buffer always fails
-          if (val.length === 0) {
-            return -1;
-          }
-          return arrayIndexOf(buffer, val, byteOffset, encoding, dir);
-        } else if (typeof val === 'number') {
-          val = val & 0xFF; // Search for a byte value [0-255]
-          if (Buffer.TYPED_ARRAY_SUPPORT && typeof Uint8Array.prototype.indexOf === 'function') {
-            if (dir) {
-              return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset);
-            } else {
-              return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset);
-            }
-          }
-          return arrayIndexOf(buffer, [val], byteOffset, encoding, dir);
-        }
-
-        throw new TypeError('val must be string, number or Buffer');
-      }
-
-      function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
+      function arrayIndexOf(arr, val, byteOffset, encoding) {
         var indexSize = 1;
         var arrLength = arr.length;
         var valLength = val.length;
@@ -58180,45 +58092,60 @@
           }
         }
 
-        var i;
-        if (dir) {
-          var foundIndex = -1;
-          for (i = byteOffset; i < arrLength; i++) {
-            if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-              if (foundIndex === -1) foundIndex = i;
-              if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
-            } else {
-              if (foundIndex !== -1) i -= i - foundIndex;
-              foundIndex = -1;
-            }
-          }
-        } else {
-          if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
-          for (i = byteOffset; i >= 0; i--) {
-            var found = true;
-            for (var j = 0; j < valLength; j++) {
-              if (read(arr, i + j) !== read(val, j)) {
-                found = false;
-                break;
-              }
-            }
-            if (found) return i;
+        var foundIndex = -1;
+        for (var i = byteOffset; i < arrLength; ++i) {
+          if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+            if (foundIndex === -1) foundIndex = i;
+            if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
+          } else {
+            if (foundIndex !== -1) i -= i - foundIndex;
+            foundIndex = -1;
           }
         }
 
         return -1;
       }
 
+      Buffer.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
+        if (typeof byteOffset === 'string') {
+          encoding = byteOffset;
+          byteOffset = 0;
+        } else if (byteOffset > 0x7fffffff) {
+          byteOffset = 0x7fffffff;
+        } else if (byteOffset < -0x80000000) {
+          byteOffset = -0x80000000;
+        }
+        byteOffset >>= 0;
+
+        if (this.length === 0) return -1;
+        if (byteOffset >= this.length) return -1;
+
+        // Negative offsets start from the end of the buffer
+        if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0);
+
+        if (typeof val === 'string') {
+          val = Buffer.from(val, encoding);
+        }
+
+        if (Buffer.isBuffer(val)) {
+          // special case: looking for empty string/buffer always fails
+          if (val.length === 0) {
+            return -1;
+          }
+          return arrayIndexOf(this, val, byteOffset, encoding);
+        }
+        if (typeof val === 'number') {
+          if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
+            return Uint8Array.prototype.indexOf.call(this, val, byteOffset);
+          }
+          return arrayIndexOf(this, [val], byteOffset, encoding);
+        }
+
+        throw new TypeError('val must be string, number or Buffer');
+      };
+
       Buffer.prototype.includes = function includes(val, byteOffset, encoding) {
         return this.indexOf(val, byteOffset, encoding) !== -1;
-      };
-
-      Buffer.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
-        return bidirectionalIndexOf(this, val, byteOffset, encoding, true);
-      };
-
-      Buffer.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
-        return bidirectionalIndexOf(this, val, byteOffset, encoding, false);
       };
 
       function hexWrite(buf, string, offset, length) {
@@ -58235,7 +58162,7 @@
 
         // must be an even number of digits
         var strLen = string.length;
-        if (strLen % 2 !== 0) throw new TypeError('Invalid hex string');
+        if (strLen % 2 !== 0) throw new Error('Invalid hex string');
 
         if (length > strLen / 2) {
           length = strLen / 2;
@@ -58256,7 +58183,7 @@
         return blitBuffer(asciiToBytes(string), buf, offset, length);
       }
 
-      function latin1Write(buf, string, offset, length) {
+      function binaryWrite(buf, string, offset, length) {
         return asciiWrite(buf, string, offset, length);
       }
 
@@ -58316,9 +58243,8 @@
             case 'ascii':
               return asciiWrite(this, string, offset, length);
 
-            case 'latin1':
             case 'binary':
-              return latin1Write(this, string, offset, length);
+              return binaryWrite(this, string, offset, length);
 
             case 'base64':
               // Warning: maxLength not taken into account in base64Write
@@ -58453,7 +58379,7 @@
         return ret;
       }
 
-      function latin1Slice(buf, start, end) {
+      function binarySlice(buf, start, end) {
         var ret = '';
         end = Math.min(buf.length, end);
 
@@ -59266,7 +59192,7 @@
         return outData;
       };
 
-      CipherBase.prototype._toString = function (value, enc, fin) {
+      CipherBase.prototype._toString = function (value, enc, final) {
         if (!this._decoder) {
           this._decoder = new StringDecoder(enc);
           this._encoding = enc;
@@ -59275,13 +59201,13 @@
           throw new Error('can\'t switch encodings');
         }
         var out = this._decoder.write(value);
-        if (fin) {
+        if (final) {
           out += this._decoder.end();
         }
         return out;
       };
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108, "inherits": 158, "stream": 209, "string_decoder": 210 }], 110: [function (require, module, exports) {
+  }, { "buffer": 108, "inherits": 158, "stream": 206, "string_decoder": 207 }], 110: [function (require, module, exports) {
     (function (Buffer) {
       // Copyright Joyent, Inc. and other Node contributors.
       //
@@ -59568,7 +59494,7 @@
         return new Hash(sha(alg));
       };
     }).call(this, require("buffer").Buffer);
-  }, { "./md5": 114, "buffer": 108, "cipher-base": 109, "inherits": 158, "ripemd160": 192, "sha.js": 202 }], 113: [function (require, module, exports) {
+  }, { "./md5": 114, "buffer": 108, "cipher-base": 109, "inherits": 158, "ripemd160": 190, "sha.js": 199 }], 113: [function (require, module, exports) {
     (function (Buffer) {
       'use strict';
 
@@ -59824,7 +59750,7 @@
         return new Hmac(alg, key);
       };
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108, "create-hash/browser": 112, "inherits": 158, "stream": 209 }], 116: [function (require, module, exports) {
+  }, { "buffer": 108, "create-hash/browser": 112, "inherits": 158, "stream": 206 }], 116: [function (require, module, exports) {
     'use strict';
 
     exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes');
@@ -59864,7 +59790,7 @@
         throw new Error(['sorry, ' + name + ' is not implemented yet', 'we accept pull requests', 'https://github.com/crypto-browserify/crypto-browserify'].join('\n'));
       };
     });
-  }, { "browserify-cipher": 96, "browserify-sign": 102, "browserify-sign/algos": 101, "create-ecdh": 111, "create-hash": 112, "create-hmac": 115, "diffie-hellman": 123, "pbkdf2": 170, "public-encrypt": 174, "randombytes": 180 }], 117: [function (require, module, exports) {
+  }, { "browserify-cipher": 96, "browserify-sign": 102, "browserify-sign/algos": 101, "create-ecdh": 111, "create-hash": 112, "create-hmac": 115, "diffie-hellman": 123, "pbkdf2": 170, "public-encrypt": 173, "randombytes": 179 }], 117: [function (require, module, exports) {
     'use strict';
 
     exports.utils = require('./des/utils');
@@ -60655,7 +60581,7 @@
         }
       }
     }).call(this, require("buffer").Buffer);
-  }, { "./generatePrime": 125, "bn.js": 78, "buffer": 108, "miller-rabin": 164, "randombytes": 180 }], 125: [function (require, module, exports) {
+  }, { "./generatePrime": 125, "bn.js": 78, "buffer": 108, "miller-rabin": 164, "randombytes": 179 }], 125: [function (require, module, exports) {
     var randomBytes = require('randombytes');
     module.exports = findPrime;
     findPrime.simpleSieve = simpleSieve;
@@ -60753,7 +60679,7 @@
         }
       }
     }
-  }, { "bn.js": 78, "miller-rabin": 164, "randombytes": 180 }], 126: [function (require, module, exports) {
+  }, { "bn.js": 78, "miller-rabin": 164, "randombytes": 179 }], 126: [function (require, module, exports) {
     module.exports = {
       "modp1": {
         "gen": "02",
@@ -62908,13 +62834,12 @@
       // 1.1. Let x = r + jn.
       if (isSecondKey) r = this.curve.pointFromX(r.add(this.curve.n), isYOdd);else r = this.curve.pointFromX(r, isYOdd);
 
-      var rInv = signature.r.invm(n);
-      var s1 = n.sub(e).mul(rInv).umod(n);
-      var s2 = s.mul(rInv).umod(n);
+      var eNeg = n.sub(e);
 
       // 1.6.1 Compute Q = r^-1 (sR -  eG)
       //               Q = r^-1 (sR + -eG)
-      return this.g.mulAdd(s1, r, s2);
+      var rInv = signature.r.invm(n);
+      return this.g.mulAdd(eNeg, r, s).mul(rInv);
     };
 
     EC.prototype.getKeyRecoveryParam = function (e, signature, Q, enc) {
@@ -63680,22 +63605,22 @@
     utils.intFromLE = intFromLE;
   }, { "bn.js": 78 }], 143: [function (require, module, exports) {
     module.exports = {
-      "_args": [["elliptic@^6.0.0", "/Volumes/Macintosh HD/Users/TayTay/Documents/Dropbox/local-dev/etherwallet/node_modules/browserify-sign"]],
+      "_args": [["elliptic@^6.0.0", "C:\\Users\\Kosala\\Documents\\GitHub\\etherwallet\\node_modules\\browserify-sign"]],
       "_from": "elliptic@>=6.0.0 <7.0.0",
-      "_id": "elliptic@6.3.2",
+      "_id": "elliptic@6.3.1",
       "_inCache": true,
       "_installable": true,
       "_location": "/elliptic",
-      "_nodeVersion": "6.3.0",
+      "_nodeVersion": "6.0.0",
       "_npmOperationalInternal": {
         "host": "packages-16-east.internal.npmjs.com",
-        "tmp": "tmp/elliptic-6.3.2.tgz_1473938837205_0.3108903462998569"
+        "tmp": "tmp/elliptic-6.3.1.tgz_1465921413402_0.5202967382501811"
       },
       "_npmUser": {
         "email": "fedor@indutny.com",
         "name": "indutny"
       },
-      "_npmVersion": "3.10.3",
+      "_npmVersion": "3.8.6",
       "_phantomChildren": {},
       "_requested": {
         "name": "elliptic",
@@ -63706,11 +63631,11 @@
         "type": "range"
       },
       "_requiredBy": ["/browserify-sign", "/create-ecdh", "/secp256k1"],
-      "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.3.2.tgz",
-      "_shasum": "e4c81e0829cf0a65ab70e998b8232723b5c1bc48",
+      "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.3.1.tgz",
+      "_shasum": "17781f2109ab0ec686b146bdcff5d2e8c6aeceda",
       "_shrinkwrap": null,
       "_spec": "elliptic@^6.0.0",
-      "_where": "/Volumes/Macintosh HD/Users/TayTay/Documents/Dropbox/local-dev/etherwallet/node_modules/browserify-sign",
+      "_where": "C:\\Users\\Kosala\\Documents\\GitHub\\etherwallet\\node_modules\\browserify-sign",
       "author": {
         "email": "fedor@indutny.com",
         "name": "Fedor Indutny"
@@ -63742,11 +63667,11 @@
       },
       "directories": {},
       "dist": {
-        "shasum": "e4c81e0829cf0a65ab70e998b8232723b5c1bc48",
-        "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.3.2.tgz"
+        "shasum": "17781f2109ab0ec686b146bdcff5d2e8c6aeceda",
+        "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.3.1.tgz"
       },
       "files": ["lib"],
-      "gitHead": "cbace4683a4a548dc0306ef36756151a20299cd5",
+      "gitHead": "c53f5cf3d832c0073eb4a4ed423a464cbce68f3e",
       "homepage": "https://github.com/indutny/elliptic",
       "keywords": ["EC", "Elliptic", "curve", "Cryptography"],
       "license": "MIT",
@@ -63770,7 +63695,7 @@
         "unit": "istanbul test _mocha --reporter=spec test/index.js",
         "version": "grunt dist && git add dist/"
       },
-      "version": "6.3.2"
+      "version": "6.3.1"
     };
   }, {}], 144: [function (require, module, exports) {
     module.exports = {
@@ -64966,7 +64891,7 @@
         }
       };
     }).call(this, require("buffer").Buffer);
-  }, { "assert": 74, "bn.js": 78, "buffer": 108, "create-hash": 112, "keccakjs": 162, "rlp": 193, "secp256k1": 195 }], 148: [function (require, module, exports) {
+  }, { "assert": 74, "bn.js": 78, "buffer": 108, "create-hash": 112, "keccakjs": 162, "rlp": 191, "secp256k1": 193 }], 148: [function (require, module, exports) {
     // Copyright Joyent, Inc. and other Node contributors.
     //
     // Permission is hereby granted, free of charge, to any person obtaining a
@@ -68275,40 +68200,49 @@
       }
     }).call(this, require("buffer").Buffer);
   }, { "./aesid.json": 166, "./asn1": 167, "./fixProc": 168, "browserify-aes": 83, "buffer": 108, "pbkdf2": 170 }], 170: [function (require, module, exports) {
-    (function (process, Buffer) {
+    (function (Buffer) {
       var createHmac = require('create-hmac');
-      var checkParameters = require('./precondition');
+      var MAX_ALLOC = Math.pow(2, 30) - 1; // default in iojs
 
-      exports.pbkdf2 = function (password, salt, iterations, keylen, digest, callback) {
+      exports.pbkdf2 = pbkdf2;
+      function pbkdf2(password, salt, iterations, keylen, digest, callback) {
         if (typeof digest === 'function') {
           callback = digest;
           digest = undefined;
         }
 
-        checkParameters(iterations, keylen);
-        if (typeof callback !== 'function') throw new Error('No callback provided to pbkdf2');
+        if (typeof callback !== 'function') {
+          throw new Error('No callback provided to pbkdf2');
+        }
 
+        var result = pbkdf2Sync(password, salt, iterations, keylen, digest);
         setTimeout(function () {
-          callback(null, exports.pbkdf2Sync(password, salt, iterations, keylen, digest));
+          callback(undefined, result);
         });
-      };
-
-      var defaultEncoding;
-      if (process.browser) {
-        defaultEncoding = 'utf-8';
-      } else {
-        var pVersionMajor = parseInt(process.version.split('.')[0].slice(1), 10);
-
-        defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary';
       }
 
-      exports.pbkdf2Sync = function (password, salt, iterations, keylen, digest) {
-        if (!Buffer.isBuffer(password)) password = new Buffer(password, defaultEncoding);
-        if (!Buffer.isBuffer(salt)) salt = new Buffer(salt, defaultEncoding);
+      exports.pbkdf2Sync = pbkdf2Sync;
+      function pbkdf2Sync(password, salt, iterations, keylen, digest) {
+        if (typeof iterations !== 'number') {
+          throw new TypeError('Iterations not a number');
+        }
 
-        checkParameters(iterations, keylen);
+        if (iterations < 0) {
+          throw new TypeError('Bad iterations');
+        }
+
+        if (typeof keylen !== 'number') {
+          throw new TypeError('Key length not a number');
+        }
+
+        if (keylen < 0 || keylen > MAX_ALLOC) {
+          throw new TypeError('Bad key length');
+        }
 
         digest = digest || 'sha1';
+
+        if (!Buffer.isBuffer(password)) password = new Buffer(password, 'binary');
+        if (!Buffer.isBuffer(salt)) salt = new Buffer(salt, 'binary');
 
         var hLen;
         var l = 1;
@@ -68334,7 +68268,10 @@
 
           for (var j = 1; j < iterations; j++) {
             U = createHmac(digest, password).update(U).digest();
-            for (var k = 0; k < hLen; k++) T[k] ^= U[k];
+
+            for (var k = 0; k < hLen; k++) {
+              T[k] ^= U[k];
+            }
           }
 
           var destPos = (i - 1) * hLen;
@@ -68343,29 +68280,9 @@
         }
 
         return DK;
-      };
-    }).call(this, require('_process'), require("buffer").Buffer);
-  }, { "./precondition": 171, "_process": 173, "buffer": 108, "create-hmac": 115 }], 171: [function (require, module, exports) {
-    var MAX_ALLOC = Math.pow(2, 30) - 1; // default in iojs
-    module.exports = function (iterations, keylen) {
-      if (typeof iterations !== 'number') {
-        throw new TypeError('Iterations not a number');
       }
-
-      if (iterations < 0) {
-        throw new TypeError('Bad iterations');
-      }
-
-      if (typeof keylen !== 'number') {
-        throw new TypeError('Key length not a number');
-      }
-
-      if (keylen < 0 || keylen > MAX_ALLOC || keylen !== keylen) {
-        /* eslint no-self-compare: 0 */
-        throw new TypeError('Bad key length');
-      }
-    };
-  }, {}], 172: [function (require, module, exports) {
+    }).call(this, require("buffer").Buffer);
+  }, { "buffer": 108, "create-hmac": 115 }], 171: [function (require, module, exports) {
     (function (process) {
       'use strict';
 
@@ -68409,7 +68326,7 @@
         }
       }
     }).call(this, require('_process'));
-  }, { "_process": 173 }], 173: [function (require, module, exports) {
+  }, { "_process": 172 }], 172: [function (require, module, exports) {
     // shim for using process in browser
     var process = module.exports = {};
 
@@ -68421,77 +68338,34 @@
     var cachedSetTimeout;
     var cachedClearTimeout;
 
-    function defaultSetTimout() {
-      throw new Error('setTimeout has not been defined');
-    }
-    function defaultClearTimeout() {
-      throw new Error('clearTimeout has not been defined');
-    }
     (function () {
       try {
-        if (typeof setTimeout === 'function') {
-          cachedSetTimeout = setTimeout;
-        } else {
-          cachedSetTimeout = defaultSetTimout;
-        }
+        cachedSetTimeout = setTimeout;
       } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
+        cachedSetTimeout = function () {
+          throw new Error('setTimeout is not defined');
+        };
       }
       try {
-        if (typeof clearTimeout === 'function') {
-          cachedClearTimeout = clearTimeout;
-        } else {
-          cachedClearTimeout = defaultClearTimeout;
-        }
+        cachedClearTimeout = clearTimeout;
       } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
+        cachedClearTimeout = function () {
+          throw new Error('clearTimeout is not defined');
+        };
       }
     })();
     function runTimeout(fun) {
       if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
         return setTimeout(fun, 0);
-      }
-      // if setTimeout wasn't available but was latter defined
-      if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-      }
-      try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-      } catch (e) {
-        try {
-          // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-          return cachedSetTimeout.call(null, fun, 0);
-        } catch (e) {
-          // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-          return cachedSetTimeout.call(this, fun, 0);
-        }
+      } else {
+        return cachedSetTimeout.call(null, fun, 0);
       }
     }
     function runClearTimeout(marker) {
       if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-      }
-      // if clearTimeout wasn't available but was latter defined
-      if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-      }
-      try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-      } catch (e) {
-        try {
-          // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-          return cachedClearTimeout.call(null, marker);
-        } catch (e) {
-          // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-          // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-          return cachedClearTimeout.call(this, marker);
-        }
+        clearTimeout(marker);
+      } else {
+        cachedClearTimeout.call(null, marker);
       }
     }
     var queue = [];
@@ -68589,7 +68463,7 @@
     process.umask = function () {
       return 0;
     };
-  }, {}], 174: [function (require, module, exports) {
+  }, {}], 173: [function (require, module, exports) {
     exports.publicEncrypt = require('./publicEncrypt');
     exports.privateDecrypt = require('./privateDecrypt');
 
@@ -68600,7 +68474,7 @@
     exports.publicDecrypt = function publicDecrypt(key, buf) {
       return exports.privateDecrypt(key, buf, true);
     };
-  }, { "./privateDecrypt": 176, "./publicEncrypt": 177 }], 175: [function (require, module, exports) {
+  }, { "./privateDecrypt": 175, "./publicEncrypt": 176 }], 174: [function (require, module, exports) {
     (function (Buffer) {
       var createHash = require('create-hash');
       module.exports = function (seed, len) {
@@ -68620,7 +68494,7 @@
         return out;
       }
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108, "create-hash": 112 }], 176: [function (require, module, exports) {
+  }, { "buffer": 108, "create-hash": 112 }], 175: [function (require, module, exports) {
     (function (Buffer) {
       var parseKeys = require('parse-asn1');
       var mgf = require('./mgf');
@@ -68731,7 +68605,7 @@
         return dif;
       }
     }).call(this, require("buffer").Buffer);
-  }, { "./mgf": 175, "./withPublic": 178, "./xor": 179, "bn.js": 78, "browserify-rsa": 99, "buffer": 108, "create-hash": 112, "parse-asn1": 169 }], 177: [function (require, module, exports) {
+  }, { "./mgf": 174, "./withPublic": 177, "./xor": 178, "bn.js": 78, "browserify-rsa": 99, "buffer": 108, "create-hash": 112, "parse-asn1": 169 }], 176: [function (require, module, exports) {
     (function (Buffer) {
       var parseKeys = require('parse-asn1');
       var randomBytes = require('randombytes');
@@ -68829,7 +68703,7 @@
         return out;
       }
     }).call(this, require("buffer").Buffer);
-  }, { "./mgf": 175, "./withPublic": 178, "./xor": 179, "bn.js": 78, "browserify-rsa": 99, "buffer": 108, "create-hash": 112, "parse-asn1": 169, "randombytes": 180 }], 178: [function (require, module, exports) {
+  }, { "./mgf": 174, "./withPublic": 177, "./xor": 178, "bn.js": 78, "browserify-rsa": 99, "buffer": 108, "create-hash": 112, "parse-asn1": 169, "randombytes": 179 }], 177: [function (require, module, exports) {
     (function (Buffer) {
       var bn = require('bn.js');
       function withPublic(paddedMsg, key) {
@@ -68838,7 +68712,7 @@
 
       module.exports = withPublic;
     }).call(this, require("buffer").Buffer);
-  }, { "bn.js": 78, "buffer": 108 }], 179: [function (require, module, exports) {
+  }, { "bn.js": 78, "buffer": 108 }], 178: [function (require, module, exports) {
     module.exports = function xor(a, b) {
       var len = a.length;
       var i = -1;
@@ -68847,7 +68721,7 @@
       }
       return a;
     };
-  }, {}], 180: [function (require, module, exports) {
+  }, {}], 179: [function (require, module, exports) {
     (function (process, global, Buffer) {
       'use strict';
 
@@ -68887,9 +68761,9 @@
         return bytes;
       }
     }).call(this, require('_process'), typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {}, require("buffer").Buffer);
-  }, { "_process": 173, "buffer": 108 }], 181: [function (require, module, exports) {
+  }, { "_process": 172, "buffer": 108 }], 180: [function (require, module, exports) {
     module.exports = require("./lib/_stream_duplex.js");
-  }, { "./lib/_stream_duplex.js": 182 }], 182: [function (require, module, exports) {
+  }, { "./lib/_stream_duplex.js": 181 }], 181: [function (require, module, exports) {
     // a duplex stream is just a stream that is both readable and writable.
     // Since JS doesn't have multiple prototypal inheritance, this class
     // prototypally inherits from Readable, and then parasitically from
@@ -68965,7 +68839,7 @@
         f(xs[i], i);
       }
     }
-  }, { "./_stream_readable": 184, "./_stream_writable": 186, "core-util-is": 110, "inherits": 158, "process-nextick-args": 172 }], 183: [function (require, module, exports) {
+  }, { "./_stream_readable": 183, "./_stream_writable": 185, "core-util-is": 110, "inherits": 158, "process-nextick-args": 171 }], 182: [function (require, module, exports) {
     // a passthrough stream.
     // basically just the most minimal sort of Transform stream.
     // Every written chunk gets output as-is.
@@ -68992,7 +68866,7 @@
     PassThrough.prototype._transform = function (chunk, encoding, cb) {
       cb(null, chunk);
     };
-  }, { "./_stream_transform": 185, "core-util-is": 110, "inherits": 158 }], 184: [function (require, module, exports) {
+  }, { "./_stream_transform": 184, "core-util-is": 110, "inherits": 158 }], 183: [function (require, module, exports) {
     (function (process) {
       'use strict';
 
@@ -69047,21 +68921,21 @@
       }
       /*</replacement>*/
 
-      var BufferList = require('./internal/streams/BufferList');
       var StringDecoder;
 
       util.inherits(Readable, Stream);
 
+      var hasPrependListener = typeof EE.prototype.prependListener === 'function';
+
       function prependListener(emitter, event, fn) {
-        if (typeof emitter.prependListener === 'function') {
-          return emitter.prependListener(event, fn);
-        } else {
-          // This is a hack to make sure that our error handler is attached before any
-          // userland ones.  NEVER DO THIS. This is here only because this code needs
-          // to continue to work with older versions of Node.js that do not include
-          // the prependListener() method. The goal is to eventually remove this hack.
-          if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
-        }
+        if (hasPrependListener) return emitter.prependListener(event, fn);
+
+        // This is a brutally ugly hack to make sure that our error handler
+        // is attached before any userland ones.  NEVER DO THIS. This is here
+        // only because this code needs to continue to work with older versions
+        // of Node.js that do not include the prependListener() method. The goal
+        // is to eventually remove this hack.
+        if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
       }
 
       var Duplex;
@@ -69085,10 +68959,7 @@
         // cast to ints.
         this.highWaterMark = ~~this.highWaterMark;
 
-        // A linked list is used to store data chunks instead of an array because the
-        // linked list can remove elements from the beginning faster than
-        // array.shift()
-        this.buffer = new BufferList();
+        this.buffer = [];
         this.length = 0;
         this.pipes = null;
         this.pipesCount = 0;
@@ -69251,8 +69122,7 @@
         if (n >= MAX_HWM) {
           n = MAX_HWM;
         } else {
-          // Get the next highest power of 2 to prevent increasing hwm excessively in
-          // tiny amounts
+          // Get the next highest power of 2
           n--;
           n |= n >>> 1;
           n |= n >>> 2;
@@ -69264,34 +69134,44 @@
         return n;
       }
 
-      // This function is designed to be inlinable, so please take care when making
-      // changes to the function body.
       function howMuchToRead(n, state) {
-        if (n <= 0 || state.length === 0 && state.ended) return 0;
-        if (state.objectMode) return 1;
-        if (n !== n) {
-          // Only flow one buffer at a time
-          if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
+        if (state.length === 0 && state.ended) return 0;
+
+        if (state.objectMode) return n === 0 ? 0 : 1;
+
+        if (n === null || isNaN(n)) {
+          // only flow one buffer at a time
+          if (state.flowing && state.buffer.length) return state.buffer[0].length;else return state.length;
         }
-        // If we're asking for more than the current hwm, then raise the hwm.
+
+        if (n <= 0) return 0;
+
+        // If we're asking for more than the target buffer level,
+        // then raise the water mark.  Bump up to the next highest
+        // power of 2, to prevent increasing it excessively in tiny
+        // amounts.
         if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
-        if (n <= state.length) return n;
-        // Don't have enough
-        if (!state.ended) {
-          state.needReadable = true;
-          return 0;
+
+        // don't have that much.  return null, unless we've ended.
+        if (n > state.length) {
+          if (!state.ended) {
+            state.needReadable = true;
+            return 0;
+          } else {
+            return state.length;
+          }
         }
-        return state.length;
+
+        return n;
       }
 
       // you can override either this method, or the async _read(n) below.
       Readable.prototype.read = function (n) {
         debug('read', n);
-        n = parseInt(n, 10);
         var state = this._readableState;
         var nOrig = n;
 
-        if (n !== 0) state.emittedReadable = false;
+        if (typeof n !== 'number' || n > 0) state.emittedReadable = false;
 
         // if we're doing read(0) to trigger a readable event, but we
         // already have a bunch of data in the buffer, then just trigger
@@ -69347,7 +69227,9 @@
         if (state.ended || state.reading) {
           doRead = false;
           debug('reading or ended', doRead);
-        } else if (doRead) {
+        }
+
+        if (doRead) {
           debug('do read');
           state.reading = true;
           state.sync = true;
@@ -69356,10 +69238,11 @@
           // call internal read method
           this._read(state.highWaterMark);
           state.sync = false;
-          // If _read pushed data synchronously, then `reading` will be false,
-          // and we need to re-evaluate how much data we can return to the user.
-          if (!state.reading) n = howMuchToRead(nOrig, state);
         }
+
+        // If _read pushed data synchronously, then `reading` will be false,
+        // and we need to re-evaluate how much data we can return to the user.
+        if (doRead && !state.reading) n = howMuchToRead(nOrig, state);
 
         var ret;
         if (n > 0) ret = fromList(n, state);else ret = null;
@@ -69367,18 +69250,16 @@
         if (ret === null) {
           state.needReadable = true;
           n = 0;
-        } else {
-          state.length -= n;
         }
 
-        if (state.length === 0) {
-          // If we have nothing in the buffer, then we want to know
-          // as soon as we *do* get something into the buffer.
-          if (!state.ended) state.needReadable = true;
+        state.length -= n;
 
-          // If we tried to read() past the EOF, then emit end on the next tick.
-          if (nOrig !== n && state.ended) endReadable(this);
-        }
+        // If we have nothing in the buffer, then we want to know
+        // as soon as we *do* get something into the buffer.
+        if (state.length === 0 && !state.ended) state.needReadable = true;
+
+        // If we tried to read() past the EOF, then emit end on the next tick.
+        if (nOrig !== n && state.ended && state.length === 0) endReadable(this);
 
         if (ret !== null) this.emit('data', ret);
 
@@ -69526,17 +69407,11 @@
           if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
         }
 
-        // If the user pushes more data while we're writing to dest then we'll end up
-        // in ondata again. However, we only want to increase awaitDrain once because
-        // dest will only emit one 'drain' event for the multiple writes.
-        // => Introduce a guard on increasing awaitDrain.
-        var increasedAwaitDrain = false;
         src.on('data', ondata);
         function ondata(chunk) {
           debug('ondata');
-          increasedAwaitDrain = false;
           var ret = dest.write(chunk);
-          if (false === ret && !increasedAwaitDrain) {
+          if (false === ret) {
             // If the user unpiped during `dest.write()`, it is possible
             // to get stuck in a permanently paused state if that write
             // also returned false.
@@ -69544,7 +69419,6 @@
             if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
               debug('false write response, pause', src._readableState.awaitDrain);
               src._readableState.awaitDrain++;
-              increasedAwaitDrain = true;
             }
             src.pause();
           }
@@ -69658,14 +69532,18 @@
       Readable.prototype.on = function (ev, fn) {
         var res = Stream.prototype.on.call(this, ev, fn);
 
-        if (ev === 'data') {
-          // Start flowing on next tick if stream isn't explicitly paused
-          if (this._readableState.flowing !== false) this.resume();
-        } else if (ev === 'readable') {
+        // If listening to data, and it has not explicitly been paused,
+        // then call resume to start the flow of data on the next tick.
+        if (ev === 'data' && false !== this._readableState.flowing) {
+          this.resume();
+        }
+
+        if (ev === 'readable' && !this._readableState.endEmitted) {
           var state = this._readableState;
-          if (!state.endEmitted && !state.readableListening) {
-            state.readableListening = state.needReadable = true;
+          if (!state.readableListening) {
+            state.readableListening = true;
             state.emittedReadable = false;
+            state.needReadable = true;
             if (!state.reading) {
               processNextTick(nReadingNextTick, this);
             } else if (state.length) {
@@ -69709,7 +69587,6 @@
         }
 
         state.resumeScheduled = false;
-        state.awaitDrain = 0;
         stream.emit('resume');
         flow(stream);
         if (state.flowing && !state.reading) stream.read(0);
@@ -69728,7 +69605,11 @@
       function flow(stream) {
         var state = stream._readableState;
         debug('flow', state.flowing);
-        while (state.flowing && stream.read() !== null) {}
+        if (state.flowing) {
+          do {
+            var chunk = stream.read();
+          } while (null !== chunk && state.flowing);
+        }
       }
 
       // wrap an old-style stream as the async data source.
@@ -69799,101 +69680,50 @@
 
       // Pluck off n bytes from an array of buffers.
       // Length is the combined lengths of all the buffers in the list.
-      // This function is designed to be inlinable, so please take care when making
-      // changes to the function body.
       function fromList(n, state) {
-        // nothing buffered
-        if (state.length === 0) return null;
-
+        var list = state.buffer;
+        var length = state.length;
+        var stringMode = !!state.decoder;
+        var objectMode = !!state.objectMode;
         var ret;
-        if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
-          // read it all, truncate the list
-          if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.head.data;else ret = state.buffer.concat(state.length);
-          state.buffer.clear();
+
+        // nothing in the list, definitely empty.
+        if (list.length === 0) return null;
+
+        if (length === 0) ret = null;else if (objectMode) ret = list.shift();else if (!n || n >= length) {
+          // read it all, truncate the array.
+          if (stringMode) ret = list.join('');else if (list.length === 1) ret = list[0];else ret = Buffer.concat(list, length);
+          list.length = 0;
         } else {
-          // read part of list
-          ret = fromListPartial(n, state.buffer, state.decoder);
-        }
+          // read just some of it.
+          if (n < list[0].length) {
+            // just take a part of the first list item.
+            // slice is the same for buffers and strings.
+            var buf = list[0];
+            ret = buf.slice(0, n);
+            list[0] = buf.slice(n);
+          } else if (n === list[0].length) {
+            // first list is a perfect match
+            ret = list.shift();
+          } else {
+            // complex case.
+            // we have enough to cover it, but it spans past the first buffer.
+            if (stringMode) ret = '';else ret = bufferShim.allocUnsafe(n);
 
-        return ret;
-      }
+            var c = 0;
+            for (var i = 0, l = list.length; i < l && c < n; i++) {
+              var _buf = list[0];
+              var cpy = Math.min(n - c, _buf.length);
 
-      // Extracts only enough buffered data to satisfy the amount requested.
-      // This function is designed to be inlinable, so please take care when making
-      // changes to the function body.
-      function fromListPartial(n, list, hasStrings) {
-        var ret;
-        if (n < list.head.data.length) {
-          // slice is the same for buffers and strings
-          ret = list.head.data.slice(0, n);
-          list.head.data = list.head.data.slice(n);
-        } else if (n === list.head.data.length) {
-          // first chunk is a perfect match
-          ret = list.shift();
-        } else {
-          // result spans more than one buffer
-          ret = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);
-        }
-        return ret;
-      }
+              if (stringMode) ret += _buf.slice(0, cpy);else _buf.copy(ret, c, 0, cpy);
 
-      // Copies a specified amount of characters from the list of buffered data
-      // chunks.
-      // This function is designed to be inlinable, so please take care when making
-      // changes to the function body.
-      function copyFromBufferString(n, list) {
-        var p = list.head;
-        var c = 1;
-        var ret = p.data;
-        n -= ret.length;
-        while (p = p.next) {
-          var str = p.data;
-          var nb = n > str.length ? str.length : n;
-          if (nb === str.length) ret += str;else ret += str.slice(0, n);
-          n -= nb;
-          if (n === 0) {
-            if (nb === str.length) {
-              ++c;
-              if (p.next) list.head = p.next;else list.head = list.tail = null;
-            } else {
-              list.head = p;
-              p.data = str.slice(nb);
+              if (cpy < _buf.length) list[0] = _buf.slice(cpy);else list.shift();
+
+              c += cpy;
             }
-            break;
           }
-          ++c;
         }
-        list.length -= c;
-        return ret;
-      }
 
-      // Copies a specified amount of bytes from the list of buffered data chunks.
-      // This function is designed to be inlinable, so please take care when making
-      // changes to the function body.
-      function copyFromBuffer(n, list) {
-        var ret = bufferShim.allocUnsafe(n);
-        var p = list.head;
-        var c = 1;
-        p.data.copy(ret);
-        n -= p.data.length;
-        while (p = p.next) {
-          var buf = p.data;
-          var nb = n > buf.length ? buf.length : n;
-          buf.copy(ret, ret.length - n, 0, nb);
-          n -= nb;
-          if (n === 0) {
-            if (nb === buf.length) {
-              ++c;
-              if (p.next) list.head = p.next;else list.head = list.tail = null;
-            } else {
-              list.head = p;
-              p.data = buf.slice(nb);
-            }
-            break;
-          }
-          ++c;
-        }
-        list.length -= c;
         return ret;
       }
 
@@ -69932,7 +69762,7 @@
         return -1;
       }
     }).call(this, require('_process'));
-  }, { "./_stream_duplex": 182, "./internal/streams/BufferList": 187, "_process": 173, "buffer": 108, "buffer-shims": 106, "core-util-is": 110, "events": 148, "inherits": 158, "isarray": 160, "process-nextick-args": 172, "string_decoder/": 210, "util": 80 }], 185: [function (require, module, exports) {
+  }, { "./_stream_duplex": 181, "_process": 172, "buffer": 108, "buffer-shims": 106, "core-util-is": 110, "events": 148, "inherits": 158, "isarray": 160, "process-nextick-args": 171, "string_decoder/": 207, "util": 80 }], 184: [function (require, module, exports) {
     // a transform stream is a readable/writable stream where you do
     // something with the data.  Sometimes it's called a "filter",
     // but that's not a great name for it, since that implies a thing where
@@ -70113,7 +69943,7 @@
 
       return stream.push(null);
     }
-  }, { "./_stream_duplex": 182, "core-util-is": 110, "inherits": 158 }], 186: [function (require, module, exports) {
+  }, { "./_stream_duplex": 181, "core-util-is": 110, "inherits": 158 }], 185: [function (require, module, exports) {
     (function (process) {
       // A bit simpler than readable streams.
       // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -70642,74 +70472,9 @@
         };
       }
     }).call(this, require('_process'));
-  }, { "./_stream_duplex": 182, "_process": 173, "buffer": 108, "buffer-shims": 106, "core-util-is": 110, "events": 148, "inherits": 158, "process-nextick-args": 172, "util-deprecate": 211 }], 187: [function (require, module, exports) {
-    'use strict';
-
-    var Buffer = require('buffer').Buffer;
-    /*<replacement>*/
-    var bufferShim = require('buffer-shims');
-    /*</replacement>*/
-
-    module.exports = BufferList;
-
-    function BufferList() {
-      this.head = null;
-      this.tail = null;
-      this.length = 0;
-    }
-
-    BufferList.prototype.push = function (v) {
-      var entry = { data: v, next: null };
-      if (this.length > 0) this.tail.next = entry;else this.head = entry;
-      this.tail = entry;
-      ++this.length;
-    };
-
-    BufferList.prototype.unshift = function (v) {
-      var entry = { data: v, next: this.head };
-      if (this.length === 0) this.tail = entry;
-      this.head = entry;
-      ++this.length;
-    };
-
-    BufferList.prototype.shift = function () {
-      if (this.length === 0) return;
-      var ret = this.head.data;
-      if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
-      --this.length;
-      return ret;
-    };
-
-    BufferList.prototype.clear = function () {
-      this.head = this.tail = null;
-      this.length = 0;
-    };
-
-    BufferList.prototype.join = function (s) {
-      if (this.length === 0) return '';
-      var p = this.head;
-      var ret = '' + p.data;
-      while (p = p.next) {
-        ret += s + p.data;
-      }return ret;
-    };
-
-    BufferList.prototype.concat = function (n) {
-      if (this.length === 0) return bufferShim.alloc(0);
-      if (this.length === 1) return this.head.data;
-      var ret = bufferShim.allocUnsafe(n >>> 0);
-      var p = this.head;
-      var i = 0;
-      while (p) {
-        p.data.copy(ret, i);
-        i += p.data.length;
-        p = p.next;
-      }
-      return ret;
-    };
-  }, { "buffer": 108, "buffer-shims": 106 }], 188: [function (require, module, exports) {
+  }, { "./_stream_duplex": 181, "_process": 172, "buffer": 108, "buffer-shims": 106, "core-util-is": 110, "events": 148, "inherits": 158, "process-nextick-args": 171, "util-deprecate": 208 }], 186: [function (require, module, exports) {
     module.exports = require("./lib/_stream_passthrough.js");
-  }, { "./lib/_stream_passthrough.js": 183 }], 189: [function (require, module, exports) {
+  }, { "./lib/_stream_passthrough.js": 182 }], 187: [function (require, module, exports) {
     (function (process) {
       var Stream = function () {
         try {
@@ -70728,11 +70493,11 @@
         module.exports = Stream;
       }
     }).call(this, require('_process'));
-  }, { "./lib/_stream_duplex.js": 182, "./lib/_stream_passthrough.js": 183, "./lib/_stream_readable.js": 184, "./lib/_stream_transform.js": 185, "./lib/_stream_writable.js": 186, "_process": 173 }], 190: [function (require, module, exports) {
+  }, { "./lib/_stream_duplex.js": 181, "./lib/_stream_passthrough.js": 182, "./lib/_stream_readable.js": 183, "./lib/_stream_transform.js": 184, "./lib/_stream_writable.js": 185, "_process": 172 }], 188: [function (require, module, exports) {
     module.exports = require("./lib/_stream_transform.js");
-  }, { "./lib/_stream_transform.js": 185 }], 191: [function (require, module, exports) {
+  }, { "./lib/_stream_transform.js": 184 }], 189: [function (require, module, exports) {
     module.exports = require("./lib/_stream_writable.js");
-  }, { "./lib/_stream_writable.js": 186 }], 192: [function (require, module, exports) {
+  }, { "./lib/_stream_writable.js": 185 }], 190: [function (require, module, exports) {
     (function (Buffer) {
       /*
       CryptoJS v3.1.2
@@ -70916,7 +70681,7 @@
 
       module.exports = ripemd160;
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108 }], 193: [function (require, module, exports) {
+  }, { "buffer": 108 }], 191: [function (require, module, exports) {
     (function (Buffer) {
       const assert = require('assert');
       /**
@@ -71148,7 +70913,7 @@
         return v;
       }
     }).call(this, require("buffer").Buffer);
-  }, { "assert": 74, "buffer": 108 }], 194: [function (require, module, exports) {
+  }, { "assert": 74, "buffer": 108 }], 192: [function (require, module, exports) {
     (function (Buffer) {
       var crypto = require('crypto');
       /* eslint-disable camelcase */
@@ -71331,11 +71096,11 @@
 
       module.exports = scrypt;
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108, "crypto": 116 }], 195: [function (require, module, exports) {
+  }, { "buffer": 108, "crypto": 116 }], 193: [function (require, module, exports) {
     'use strict';
 
     module.exports = require('./lib')(require('./lib/elliptic'));
-  }, { "./lib": 199, "./lib/elliptic": 198 }], 196: [function (require, module, exports) {
+  }, { "./lib": 196, "./lib/elliptic": 195 }], 194: [function (require, module, exports) {
     (function (Buffer) {
       'use strict';
 
@@ -71383,171 +71148,7 @@
         if (number <= x || number >= y) throw RangeError(message);
       };
     }).call(this, { "isBuffer": require("../../is-buffer/index.js") });
-  }, { "../../is-buffer/index.js": 159 }], 197: [function (require, module, exports) {
-    (function (Buffer) {
-      'use strict';
-
-      var bip66 = require('bip66');
-
-      var EC_PRIVKEY_EXPORT_DER_COMPRESSED = new Buffer([
-      // begin
-      0x30, 0x81, 0xd3, 0x02, 0x01, 0x01, 0x04, 0x20,
-      // private key
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      // middle
-      0xa0, 0x81, 0x85, 0x30, 0x81, 0x82, 0x02, 0x01, 0x01, 0x30, 0x2c, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xcE, 0x3d, 0x01, 0x01, 0x02, 0x21, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfE, 0xff, 0xff, 0xfc, 0x2f, 0x30, 0x06, 0x04, 0x01, 0x00, 0x04, 0x01, 0x07, 0x04, 0x21, 0x02, 0x79, 0xbE, 0x66, 0x7E, 0xf9, 0xdc, 0xbb, 0xac, 0x55, 0xa0, 0x62, 0x95, 0xcE, 0x87, 0x0b, 0x07, 0x02, 0x9b, 0xfc, 0xdb, 0x2d, 0xcE, 0x28, 0xd9, 0x59, 0xf2, 0x81, 0x5b, 0x16, 0xf8, 0x17, 0x98, 0x02, 0x21, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfE, 0xba, 0xaE, 0xdc, 0xE6, 0xaf, 0x48, 0xa0, 0x3b, 0xbf, 0xd2, 0x5E, 0x8c, 0xd0, 0x36, 0x41, 0x41, 0x02, 0x01, 0x01, 0xa1, 0x24, 0x03, 0x22, 0x00,
-      // public key
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-
-      var EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED = new Buffer([
-      // begin
-      0x30, 0x82, 0x01, 0x13, 0x02, 0x01, 0x01, 0x04, 0x20,
-      // private key
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      // middle
-      0xa0, 0x81, 0xa5, 0x30, 0x81, 0xa2, 0x02, 0x01, 0x01, 0x30, 0x2c, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xcE, 0x3d, 0x01, 0x01, 0x02, 0x21, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfE, 0xff, 0xff, 0xfc, 0x2f, 0x30, 0x06, 0x04, 0x01, 0x00, 0x04, 0x01, 0x07, 0x04, 0x41, 0x04, 0x79, 0xbE, 0x66, 0x7E, 0xf9, 0xdc, 0xbb, 0xac, 0x55, 0xa0, 0x62, 0x95, 0xcE, 0x87, 0x0b, 0x07, 0x02, 0x9b, 0xfc, 0xdb, 0x2d, 0xcE, 0x28, 0xd9, 0x59, 0xf2, 0x81, 0x5b, 0x16, 0xf8, 0x17, 0x98, 0x48, 0x3a, 0xda, 0x77, 0x26, 0xa3, 0xc4, 0x65, 0x5d, 0xa4, 0xfb, 0xfc, 0x0E, 0x11, 0x08, 0xa8, 0xfd, 0x17, 0xb4, 0x48, 0xa6, 0x85, 0x54, 0x19, 0x9c, 0x47, 0xd0, 0x8f, 0xfb, 0x10, 0xd4, 0xb8, 0x02, 0x21, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfE, 0xba, 0xaE, 0xdc, 0xE6, 0xaf, 0x48, 0xa0, 0x3b, 0xbf, 0xd2, 0x5E, 0x8c, 0xd0, 0x36, 0x41, 0x41, 0x02, 0x01, 0x01, 0xa1, 0x44, 0x03, 0x42, 0x00,
-      // public key
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-
-      var ZERO_BUFFER_32 = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
-
-      exports.privateKeyExport = function (privateKey, publicKey, compressed) {
-        var result = new Buffer(compressed ? EC_PRIVKEY_EXPORT_DER_COMPRESSED : EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED);
-        privateKey.copy(result, compressed ? 8 : 9);
-        publicKey.copy(result, compressed ? 181 : 214);
-        return result;
-      };
-
-      exports.privateKeyImport = function (privateKey) {
-        var length = privateKey.length;
-
-        // sequence header
-        var index = 0;
-        if (length < index + 1 || privateKey[index] !== 0x30) return;
-        index += 1;
-
-        // sequence length constructor
-        if (length < index + 1 || !(privateKey[index] & 0x80)) return;
-
-        var lenb = privateKey[index] & 0x7f;
-        index += 1;
-        if (lenb < 1 || lenb > 2) return;
-        if (length < index + lenb) return;
-
-        // sequence length
-        var len = privateKey[index + lenb - 1] | (lenb > 1 ? privateKey[index + lenb - 2] << 8 : 0);
-        index += lenb;
-        if (length < index + len) return;
-
-        // sequence element 0: version number (=1)
-        if (length < index + 3 || privateKey[index] !== 0x02 || privateKey[index + 1] !== 0x01 || privateKey[index + 2] !== 0x01) {
-          return;
-        }
-        index += 3;
-
-        // sequence element 1: octet string, up to 32 bytes
-        if (length < index + 2 || privateKey[index] !== 0x04 || privateKey[index + 1] > 0x20 || length < index + 2 + privateKey[index + 1]) {
-          return;
-        }
-
-        return privateKey.slice(index + 2, index + 2 + privateKey[index + 1]);
-      };
-
-      exports.signatureExport = function (sigObj) {
-        var r = Buffer.concat([new Buffer([0]), sigObj.r]);
-        for (var lenR = 33, posR = 0; lenR > 1 && r[posR] === 0x00 && !(r[posR + 1] & 0x80); --lenR, ++posR);
-
-        var s = Buffer.concat([new Buffer([0]), sigObj.s]);
-        for (var lenS = 33, posS = 0; lenS > 1 && s[posS] === 0x00 && !(s[posS + 1] & 0x80); --lenS, ++posS);
-
-        return bip66.encode(r.slice(posR), s.slice(posS));
-      };
-
-      exports.signatureImport = function (sig) {
-        var r = new Buffer(ZERO_BUFFER_32);
-        var s = new Buffer(ZERO_BUFFER_32);
-
-        try {
-          var sigObj = bip66.decode(sig);
-          if (sigObj.r.length === 33 && sigObj.r[0] === 0x00) sigObj.r = sigObj.r.slice(1);
-          if (sigObj.r.length > 32) throw new Error('R length is too long');
-          if (sigObj.s.length === 33 && sigObj.s[0] === 0x00) sigObj.s = sigObj.s.slice(1);
-          if (sigObj.s.length > 32) throw new Error('S length is too long');
-        } catch (err) {
-          return;
-        }
-
-        sigObj.r.copy(r, 32 - sigObj.r.length);
-        sigObj.s.copy(s, 32 - sigObj.s.length);
-
-        return { r: r, s: s };
-      };
-
-      exports.signatureImportLax = function (sig) {
-        var r = new Buffer(ZERO_BUFFER_32);
-        var s = new Buffer(ZERO_BUFFER_32);
-
-        var length = sig.length;
-        var index = 0;
-
-        // sequence tag byte
-        if (sig[index++] !== 0x30) return;
-
-        // sequence length byte
-        var lenbyte = sig[index++];
-        if (lenbyte & 0x80) {
-          index += lenbyte - 0x80;
-          if (index > length) return;
-        }
-
-        // sequence tag byte for r
-        if (sig[index++] !== 0x02) return;
-
-        // length for r
-        var rlen = sig[index++];
-        if (rlen & 0x80) {
-          lenbyte = rlen - 0x80;
-          if (index + lenbyte > length) return;
-          for (; lenbyte > 0 && sig[index] === 0x00; index += 1, lenbyte -= 1);
-          for (rlen = 0; lenbyte > 0; index += 1, lenbyte -= 1) rlen = (rlen << 8) + sig[index];
-        }
-        if (rlen > length - index) return;
-        var rindex = index;
-        index += rlen;
-
-        // sequence tag byte for s
-        if (sig[index++] !== 0x02) return;
-
-        // length for s
-        var slen = sig[index++];
-        if (slen & 0x80) {
-          lenbyte = slen - 0x80;
-          if (index + lenbyte > length) return;
-          for (; lenbyte > 0 && sig[index] === 0x00; index += 1, lenbyte -= 1);
-          for (slen = 0; lenbyte > 0; index += 1, lenbyte -= 1) slen = (slen << 8) + sig[index];
-        }
-        if (slen > length - index) return;
-        var sindex = index;
-        index += slen;
-
-        // ignore leading zeros in r
-        for (; rlen > 0 && sig[rindex] === 0x00; rlen -= 1, rindex += 1);
-        // copy r value
-        if (rlen > 32) return;
-        var rvalue = sig.slice(rindex, rindex + rlen);
-        rvalue.copy(r, 32 - rvalue.length);
-
-        // ignore leading zeros in s
-        for (; slen > 0 && sig[sindex] === 0x00; slen -= 1, sindex += 1);
-        // copy s value
-        if (slen > 32) return;
-        var svalue = sig.slice(sindex, sindex + slen);
-        svalue.copy(s, 32 - svalue.length);
-
-        return { r: r, s: s };
-      };
-    }).call(this, require("buffer").Buffer);
-  }, { "bip66": 77, "buffer": 108 }], 198: [function (require, module, exports) {
+  }, { "../../is-buffer/index.js": 159 }], 195: [function (require, module, exports) {
     (function (Buffer) {
       'use strict';
 
@@ -71792,240 +71393,317 @@
         return new Buffer(pair.pub.mul(scalar).encode(true, compressed));
       };
     }).call(this, require("buffer").Buffer);
-  }, { "../messages.json": 200, "bn.js": 78, "buffer": 108, "create-hash": 112, "elliptic": 127 }], 199: [function (require, module, exports) {
-    'use strict';
+  }, { "../messages.json": 197, "bn.js": 78, "buffer": 108, "create-hash": 112, "elliptic": 127 }], 196: [function (require, module, exports) {
+    (function (Buffer) {
+      'use strict';
 
-    var assert = require('./assert');
-    var der = require('./der');
-    var messages = require('./messages.json');
+      var bip66 = require('bip66');
 
-    function initCompressedValue(value, defaultValue) {
-      if (value === undefined) return defaultValue;
+      var assert = require('./assert');
+      var messages = require('./messages.json');
 
-      assert.isBoolean(value, messages.COMPRESSED_TYPE_INVALID);
-      return value;
-    }
+      var EC_PRIVKEY_EXPORT_DER_COMPRESSED_BEGIN = new Buffer('3081d30201010420', 'hex');
+      var EC_PRIVKEY_EXPORT_DER_COMPRESSED_MIDDLE = new Buffer('a08185308182020101302c06072a8648ce3d0101022100fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f300604010004010704210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798022100fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141020101a124032200', 'hex');
+      var EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_BEGIN = new Buffer('308201130201010420', 'hex');
+      var EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_MIDDLE = new Buffer('a081a53081a2020101302c06072a8648ce3d0101022100fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f300604010004010704410479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8022100fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141020101a144034200', 'hex');
 
-    module.exports = function (secp256k1) {
-      return {
-        privateKeyVerify: function (privateKey) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          return privateKey.length === 32 && secp256k1.privateKeyVerify(privateKey);
-        },
+      var ZERO_BUFFER_32 = new Buffer('0000000000000000000000000000000000000000000000000000000000000000', 'hex');
 
-        privateKeyExport: function (privateKey, compressed) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+      function initCompressedValue(value, defaultValue) {
+        if (value === undefined) return defaultValue;
 
-          compressed = initCompressedValue(compressed, true);
-          var publicKey = secp256k1.privateKeyExport(privateKey, compressed);
+        assert.isBoolean(value, messages.COMPRESSED_TYPE_INVALID);
+        return value;
+      }
 
-          return der.privateKeyExport(privateKey, publicKey, compressed);
-        },
+      module.exports = function (secp256k1) {
+        return {
+          privateKeyVerify: function (privateKey) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            return privateKey.length === 32 && secp256k1.privateKeyVerify(privateKey);
+          },
 
-        privateKeyImport: function (privateKey) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+          privateKeyExport: function (privateKey, compressed) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
 
-          privateKey = der.privateKeyImport(privateKey);
-          if (privateKey && privateKey.length === 32 && secp256k1.privateKeyVerify(privateKey)) return privateKey;
+            compressed = initCompressedValue(compressed, true);
 
-          throw new Error(messages.EC_PRIVATE_KEY_IMPORT_DER_FAIL);
-        },
+            var publicKey = secp256k1.privateKeyExport(privateKey, compressed);
 
-        privateKeyTweakAdd: function (privateKey, tweak) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+            var result = new Buffer(compressed ? 214 : 279);
+            var targetStart = 0;
+            if (compressed) {
+              EC_PRIVKEY_EXPORT_DER_COMPRESSED_BEGIN.copy(result, targetStart);
+              targetStart += EC_PRIVKEY_EXPORT_DER_COMPRESSED_BEGIN.length;
 
-          assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
-          assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+              privateKey.copy(result, targetStart);
+              targetStart += privateKey.length;
 
-          return secp256k1.privateKeyTweakAdd(privateKey, tweak);
-        },
+              EC_PRIVKEY_EXPORT_DER_COMPRESSED_MIDDLE.copy(result, targetStart);
+              targetStart += EC_PRIVKEY_EXPORT_DER_COMPRESSED_MIDDLE.length;
 
-        privateKeyTweakMul: function (privateKey, tweak) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+              publicKey.copy(result, targetStart);
+            } else {
+              EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_BEGIN.copy(result, targetStart);
+              targetStart += EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_BEGIN.length;
 
-          assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
-          assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+              privateKey.copy(result, targetStart);
+              targetStart += privateKey.length;
 
-          return secp256k1.privateKeyTweakMul(privateKey, tweak);
-        },
+              EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_MIDDLE.copy(result, targetStart);
+              targetStart += EC_PRIVKEY_EXPORT_DER_UNCOMPRESSED_MIDDLE.length;
 
-        publicKeyCreate: function (privateKey, compressed) {
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.publicKeyCreate(privateKey, compressed);
-        },
-
-        publicKeyConvert: function (publicKey, compressed) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.publicKeyConvert(publicKey, compressed);
-        },
-
-        publicKeyVerify: function (publicKey) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          return secp256k1.publicKeyVerify(publicKey);
-        },
-
-        publicKeyTweakAdd: function (publicKey, tweak, compressed) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
-          assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.publicKeyTweakAdd(publicKey, tweak, compressed);
-        },
-
-        publicKeyTweakMul: function (publicKey, tweak, compressed) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
-          assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.publicKeyTweakMul(publicKey, tweak, compressed);
-        },
-
-        publicKeyCombine: function (publicKeys, compressed) {
-          assert.isArray(publicKeys, messages.EC_PUBLIC_KEYS_TYPE_INVALID);
-          assert.isLengthGTZero(publicKeys, messages.EC_PUBLIC_KEYS_LENGTH_INVALID);
-          for (var i = 0; i < publicKeys.length; ++i) {
-            assert.isBuffer(publicKeys[i], messages.EC_PUBLIC_KEY_TYPE_INVALID);
-            assert.isBufferLength2(publicKeys[i], 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-          }
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.publicKeyCombine(publicKeys, compressed);
-        },
-
-        signatureNormalize: function (signature) {
-          assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          return secp256k1.signatureNormalize(signature);
-        },
-
-        signatureExport: function (signature) {
-          assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          var sigObj = secp256k1.signatureExport(signature);
-          return der.signatureExport(sigObj);
-        },
-
-        signatureImport: function (sig) {
-          assert.isBuffer(sig, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isLengthGTZero(sig, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          var sigObj = der.signatureImport(sig);
-          if (sigObj) return secp256k1.signatureImport(sigObj);
-
-          throw new Error(messages.ECDSA_SIGNATURE_PARSE_DER_FAIL);
-        },
-
-        signatureImportLax: function (sig) {
-          assert.isBuffer(sig, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isLengthGTZero(sig, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          var sigObj = der.signatureImportLax(sig);
-          if (sigObj) return secp256k1.signatureImport(sigObj);
-
-          throw new Error(messages.ECDSA_SIGNATURE_PARSE_DER_FAIL);
-        },
-
-        sign: function (message, privateKey, options) {
-          assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
-          assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
-
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
-
-          var data = null;
-          var noncefn = null;
-          if (options !== undefined) {
-            assert.isObject(options, messages.OPTIONS_TYPE_INVALID);
-
-            if (options.data !== undefined) {
-              assert.isBuffer(options.data, messages.OPTIONS_DATA_TYPE_INVALID);
-              assert.isBufferLength(options.data, 32, messages.OPTIONS_DATA_LENGTH_INVALID);
-              data = options.data;
+              publicKey.copy(result, targetStart);
             }
 
-            if (options.noncefn !== undefined) {
-              assert.isFunction(options.noncefn, messages.OPTIONS_NONCEFN_TYPE_INVALID);
-              noncefn = options.noncefn;
+            return result;
+          },
+
+          privateKeyImport: function (privateKey) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+
+            do {
+              var length = privateKey.length;
+
+              // sequence header
+              var index = 0;
+              if (length < index + 1 || privateKey[index] !== 0x30) break;
+              index += 1;
+
+              // sequence length constructor
+              if (length < index + 1 || !(privateKey[index] & 0x80)) break;
+
+              var lenb = privateKey[index] & 0x7f;
+              index += 1;
+              if (lenb < 1 || lenb > 2) break;
+              if (length < index + lenb) break;
+
+              // sequence length
+              var len = privateKey[index + lenb - 1] | (lenb > 1 ? privateKey[index + lenb - 2] << 8 : 0);
+              index += lenb;
+              if (length < index + len) break;
+
+              // sequence element 0: version number (=1)
+              if (length < index + 3 || privateKey[index] !== 0x02 || privateKey[index + 1] !== 0x01 || privateKey[index + 2] !== 0x01) {
+                break;
+              }
+              index += 3;
+
+              // sequence element 1: octet string, up to 32 bytes
+              if (length < index + 2 || privateKey[index] !== 0x04 || privateKey[index + 1] > 0x20 || length < index + 2 + privateKey[index + 1]) {
+                break;
+              }
+
+              privateKey = privateKey.slice(index + 2, index + 2 + privateKey[index + 1]);
+              if (privateKey.length === 32 && secp256k1.privateKeyVerify(privateKey)) return privateKey;
+            } while (false);
+
+            throw new Error(messages.EC_PRIVATE_KEY_IMPORT_DER_FAIL);
+          },
+
+          privateKeyTweakAdd: function (privateKey, tweak) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
+            assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+
+            return secp256k1.privateKeyTweakAdd(privateKey, tweak);
+          },
+
+          privateKeyTweakMul: function (privateKey, tweak) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
+            assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+
+            return secp256k1.privateKeyTweakMul(privateKey, tweak);
+          },
+
+          publicKeyCreate: function (privateKey, compressed) {
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.publicKeyCreate(privateKey, compressed);
+          },
+
+          publicKeyConvert: function (publicKey, compressed) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.publicKeyConvert(publicKey, compressed);
+          },
+
+          publicKeyVerify: function (publicKey) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            return secp256k1.publicKeyVerify(publicKey);
+          },
+
+          publicKeyTweakAdd: function (publicKey, tweak, compressed) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
+            assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.publicKeyTweakAdd(publicKey, tweak, compressed);
+          },
+
+          publicKeyTweakMul: function (publicKey, tweak, compressed) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(tweak, messages.TWEAK_TYPE_INVALID);
+            assert.isBufferLength(tweak, 32, messages.TWEAK_LENGTH_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.publicKeyTweakMul(publicKey, tweak, compressed);
+          },
+
+          publicKeyCombine: function (publicKeys, compressed) {
+            assert.isArray(publicKeys, messages.EC_PUBLIC_KEYS_TYPE_INVALID);
+            assert.isLengthGTZero(publicKeys, messages.EC_PUBLIC_KEYS_LENGTH_INVALID);
+            for (var i = 0; i < publicKeys.length; ++i) {
+              assert.isBuffer(publicKeys[i], messages.EC_PUBLIC_KEY_TYPE_INVALID);
+              assert.isBufferLength2(publicKeys[i], 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
             }
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.publicKeyCombine(publicKeys, compressed);
+          },
+
+          signatureNormalize: function (signature) {
+            assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
+            assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
+
+            return secp256k1.signatureNormalize(signature);
+          },
+
+          signatureExport: function (signature) {
+            assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
+            assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
+
+            var sigObj = secp256k1.signatureExport(signature);
+
+            var r = Buffer.concat([new Buffer([0]), sigObj.r]);
+            for (var lenR = 33, posR = 0; lenR > 1 && r[posR] === 0x00 && !(r[posR + 1] & 0x80); --lenR, ++posR);
+
+            var s = Buffer.concat([new Buffer([0]), sigObj.s]);
+            for (var lenS = 33, posS = 0; lenS > 1 && s[posS] === 0x00 && !(s[posS + 1] & 0x80); --lenS, ++posS);
+
+            return bip66.encode(r.slice(posR), s.slice(posS));
+          },
+
+          signatureImport: function (sig) {
+            assert.isBuffer(sig, messages.ECDSA_SIGNATURE_TYPE_INVALID);
+            assert.isLengthGTZero(sig, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
+
+            try {
+              var sigObj = bip66.decode(sig);
+              if (sigObj.r.length === 33 && sigObj.r[0] === 0x00) sigObj.r = sigObj.r.slice(1);
+              if (sigObj.r.length > 32) throw new Error('R length is too long');
+              if (sigObj.s.length === 33 && sigObj.s[0] === 0x00) sigObj.s = sigObj.s.slice(1);
+              if (sigObj.s.length > 32) throw new Error('S length is too long');
+            } catch (err) {
+              throw new Error(messages.ECDSA_SIGNATURE_PARSE_DER_FAIL);
+            }
+
+            return secp256k1.signatureImport({
+              r: Buffer.concat([ZERO_BUFFER_32, sigObj.r]).slice(-32),
+              s: Buffer.concat([ZERO_BUFFER_32, sigObj.s]).slice(-32)
+            });
+          },
+
+          sign: function (message, privateKey, options) {
+            assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
+            assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
+
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            var data = null;
+            var noncefn = null;
+            if (options !== undefined) {
+              assert.isObject(options, messages.OPTIONS_TYPE_INVALID);
+
+              if (options.data !== undefined) {
+                assert.isBuffer(options.data, messages.OPTIONS_DATA_TYPE_INVALID);
+                assert.isBufferLength(options.data, 32, messages.OPTIONS_DATA_LENGTH_INVALID);
+                data = options.data;
+              }
+
+              if (options.noncefn !== undefined) {
+                assert.isFunction(options.noncefn, messages.OPTIONS_NONCEFN_TYPE_INVALID);
+                noncefn = options.noncefn;
+              }
+            }
+
+            return secp256k1.sign(message, privateKey, noncefn, data);
+          },
+
+          verify: function (message, signature, publicKey) {
+            assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
+            assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
+
+            assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
+            assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
+
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            return secp256k1.verify(message, signature, publicKey);
+          },
+
+          recover: function (message, signature, recovery, compressed) {
+            assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
+            assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
+
+            assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
+            assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
+
+            assert.isNumber(recovery, messages.RECOVERY_ID_TYPE_INVALID);
+            assert.isNumberInInterval(recovery, -1, 4, messages.RECOVERY_ID_VALUE_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.recover(message, signature, recovery, compressed);
+          },
+
+          ecdh: function (publicKey, privateKey) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            return secp256k1.ecdh(publicKey, privateKey);
+          },
+
+          ecdhUnsafe: function (publicKey, privateKey, compressed) {
+            assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
+            assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
+
+            assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
+            assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
+
+            compressed = initCompressedValue(compressed, true);
+
+            return secp256k1.ecdhUnsafe(publicKey, privateKey, compressed);
           }
-
-          return secp256k1.sign(message, privateKey, noncefn, data);
-        },
-
-        verify: function (message, signature, publicKey) {
-          assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
-          assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
-
-          assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          return secp256k1.verify(message, signature, publicKey);
-        },
-
-        recover: function (message, signature, recovery, compressed) {
-          assert.isBuffer(message, messages.MSG32_TYPE_INVALID);
-          assert.isBufferLength(message, 32, messages.MSG32_LENGTH_INVALID);
-
-          assert.isBuffer(signature, messages.ECDSA_SIGNATURE_TYPE_INVALID);
-          assert.isBufferLength(signature, 64, messages.ECDSA_SIGNATURE_LENGTH_INVALID);
-
-          assert.isNumber(recovery, messages.RECOVERY_ID_TYPE_INVALID);
-          assert.isNumberInInterval(recovery, -1, 4, messages.RECOVERY_ID_VALUE_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.recover(message, signature, recovery, compressed);
-        },
-
-        ecdh: function (publicKey, privateKey) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
-
-          return secp256k1.ecdh(publicKey, privateKey);
-        },
-
-        ecdhUnsafe: function (publicKey, privateKey, compressed) {
-          assert.isBuffer(publicKey, messages.EC_PUBLIC_KEY_TYPE_INVALID);
-          assert.isBufferLength2(publicKey, 33, 65, messages.EC_PUBLIC_KEY_LENGTH_INVALID);
-
-          assert.isBuffer(privateKey, messages.EC_PRIVATE_KEY_TYPE_INVALID);
-          assert.isBufferLength(privateKey, 32, messages.EC_PRIVATE_KEY_LENGTH_INVALID);
-
-          compressed = initCompressedValue(compressed, true);
-
-          return secp256k1.ecdhUnsafe(publicKey, privateKey, compressed);
-        }
+        };
       };
-    };
-  }, { "./assert": 196, "./der": 197, "./messages.json": 200 }], 200: [function (require, module, exports) {
+    }).call(this, require("buffer").Buffer);
+  }, { "./assert": 194, "./messages.json": 197, "bip66": 77, "buffer": 108 }], 197: [function (require, module, exports) {
     module.exports = {
       "COMPRESSED_TYPE_INVALID": "compressed should be a boolean",
       "EC_PRIVATE_KEY_TYPE_INVALID": "private key should be a Buffer",
@@ -72062,7 +71740,7 @@
       "TWEAK_TYPE_INVALID": "tweak should be a Buffer",
       "TWEAK_LENGTH_INVALID": "tweak length is invalid"
     };
-  }, {}], 201: [function (require, module, exports) {
+  }, {}], 198: [function (require, module, exports) {
     (function (Buffer) {
       // prototype class for hash functions
       function Hash(blockSize, finalSize) {
@@ -72134,7 +71812,7 @@
 
       module.exports = Hash;
     }).call(this, require("buffer").Buffer);
-  }, { "buffer": 108 }], 202: [function (require, module, exports) {
+  }, { "buffer": 108 }], 199: [function (require, module, exports) {
     var exports = module.exports = function SHA(algorithm) {
       algorithm = algorithm.toLowerCase();
 
@@ -72150,7 +71828,7 @@
     exports.sha256 = require('./sha256');
     exports.sha384 = require('./sha384');
     exports.sha512 = require('./sha512');
-  }, { "./sha": 203, "./sha1": 204, "./sha224": 205, "./sha256": 206, "./sha384": 207, "./sha512": 208 }], 203: [function (require, module, exports) {
+  }, { "./sha": 200, "./sha1": 201, "./sha224": 202, "./sha256": 203, "./sha384": 204, "./sha512": 205 }], 200: [function (require, module, exports) {
     (function (Buffer) {
       /*
        * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
@@ -72244,7 +71922,7 @@
 
       module.exports = Sha;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "buffer": 108, "inherits": 158 }], 204: [function (require, module, exports) {
+  }, { "./hash": 198, "buffer": 108, "inherits": 158 }], 201: [function (require, module, exports) {
     (function (Buffer) {
       /*
        * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -72343,7 +72021,7 @@
 
       module.exports = Sha1;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "buffer": 108, "inherits": 158 }], 205: [function (require, module, exports) {
+  }, { "./hash": 198, "buffer": 108, "inherits": 158 }], 202: [function (require, module, exports) {
     (function (Buffer) {
       /**
        * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -72398,7 +72076,7 @@
 
       module.exports = Sha224;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "./sha256": 206, "buffer": 108, "inherits": 158 }], 206: [function (require, module, exports) {
+  }, { "./hash": 198, "./sha256": 203, "buffer": 108, "inherits": 158 }], 203: [function (require, module, exports) {
     (function (Buffer) {
       /**
        * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -72518,7 +72196,7 @@
 
       module.exports = Sha256;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "buffer": 108, "inherits": 158 }], 207: [function (require, module, exports) {
+  }, { "./hash": 198, "buffer": 108, "inherits": 158 }], 204: [function (require, module, exports) {
     (function (Buffer) {
       var inherits = require('inherits');
       var SHA512 = require('./sha512');
@@ -72577,7 +72255,7 @@
 
       module.exports = Sha384;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "./sha512": 208, "buffer": 108, "inherits": 158 }], 208: [function (require, module, exports) {
+  }, { "./hash": 198, "./sha512": 205, "buffer": 108, "inherits": 158 }], 205: [function (require, module, exports) {
     (function (Buffer) {
       var inherits = require('inherits');
       var Hash = require('./hash');
@@ -72798,7 +72476,7 @@
 
       module.exports = Sha512;
     }).call(this, require("buffer").Buffer);
-  }, { "./hash": 201, "buffer": 108, "inherits": 158 }], 209: [function (require, module, exports) {
+  }, { "./hash": 198, "buffer": 108, "inherits": 158 }], 206: [function (require, module, exports) {
     // Copyright Joyent, Inc. and other Node contributors.
     //
     // Permission is hereby granted, free of charge, to any person obtaining a
@@ -72923,7 +72601,7 @@
       // Allow for unix-like usage: A.pipe(B).pipe(C)
       return dest;
     };
-  }, { "events": 148, "inherits": 158, "readable-stream/duplex.js": 181, "readable-stream/passthrough.js": 188, "readable-stream/readable.js": 189, "readable-stream/transform.js": 190, "readable-stream/writable.js": 191 }], 210: [function (require, module, exports) {
+  }, { "events": 148, "inherits": 158, "readable-stream/duplex.js": 180, "readable-stream/passthrough.js": 186, "readable-stream/readable.js": 187, "readable-stream/transform.js": 188, "readable-stream/writable.js": 189 }], 207: [function (require, module, exports) {
     // Copyright Joyent, Inc. and other Node contributors.
     //
     // Permission is hereby granted, free of charge, to any person obtaining a
@@ -73141,7 +72819,7 @@
       this.charReceived = buffer.length % 3;
       this.charLength = this.charReceived ? 3 : 0;
     }
-  }, { "buffer": 108 }], 211: [function (require, module, exports) {
+  }, { "buffer": 108 }], 208: [function (require, module, exports) {
     (function (global) {
 
       /**
@@ -73211,13 +72889,11 @@
         return String(val).toLowerCase() === 'true';
       }
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, {}], 212: [function (require, module, exports) {
-    arguments[4][158][0].apply(exports, arguments);
-  }, { "dup": 158 }], 213: [function (require, module, exports) {
+  }, {}], 209: [function (require, module, exports) {
     module.exports = function isBuffer(arg) {
       return arg && typeof arg === 'object' && typeof arg.copy === 'function' && typeof arg.fill === 'function' && typeof arg.readUInt8 === 'function';
     };
-  }, {}], 214: [function (require, module, exports) {
+  }, {}], 210: [function (require, module, exports) {
     (function (process, global) {
       // Copyright Joyent, Inc. and other Node contributors.
       //
@@ -73764,7 +73440,7 @@
         return Object.prototype.hasOwnProperty.call(obj, prop);
       }
     }).call(this, require('_process'), typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, { "./support/isBuffer": 213, "_process": 173, "inherits": 212 }], 215: [function (require, module, exports) {
+  }, { "./support/isBuffer": 209, "_process": 172, "inherits": 158 }], 211: [function (require, module, exports) {
     (function (global) {
 
       var rng;
@@ -73798,7 +73474,7 @@
 
       module.exports = rng;
     }).call(this, typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  }, {}], 216: [function (require, module, exports) {
+  }, {}], 212: [function (require, module, exports) {
     //     uuid.js
     //
     //     Copyright (c) 2010-2012 Robert Kieffer
@@ -73976,7 +73652,7 @@
     uuid.unparse = unparse;
 
     module.exports = uuid;
-  }, { "./rng": 215 }], 217: [function (require, module, exports) {
+  }, { "./rng": 211 }], 213: [function (require, module, exports) {
     var indexOf = require('indexof');
 
     var Object_keys = function (obj) {
